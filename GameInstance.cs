@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -19,6 +20,8 @@ namespace Sharpmon_213979
         public static List<Attack> AllAttacks = new List<Attack>();         //The list that will contain every existing attack of the game.
         public static List<Item> AllItems = new List<Item>();               //The list that will contain every existing item of the game.
         public static List<Sharpmon> AllSharpmons = new List<Sharpmon>();   //The list that will contain every existing sharpmon of the game.
+        public static List<string> Badges = new List<string>();             //The list that will contain every existing badges of the game.
+        public static List<string> Towns = new List<string>();              //The list that will contain every existing towns of the game.
         public static Random Rng = new Random();                            //The random object that every class will use when it comes to Random number generator.
         public static string Choice;                                        //The value that will be used for stocking (almost) every choices in the game, one at a time.
         private static Player player;                                       //The one and only, main player of the game.
@@ -30,6 +33,8 @@ namespace Sharpmon_213979
             Sharpdex.CreateAttacks(GameInstance.AllAttacks);                //Fill our Attacks list with all our attack created in our sharpdex method "CreateAttacks".
             Sharpdex.CreateItems(GameInstance.AllItems);                    //Fill our Items list with all our items created in our sharpdex method "CreateItems".
             Sharpdex.CreateSharpmons(GameInstance.AllSharpmons);            //Fill our Sharpmons list with all our sharpmon created in our sharpdex method "CreateSharpmons".
+            Sharpdex.CreateBadges(GameInstance.Badges);                     //Fill our Badges list with all our bages created in our sharpdex method "CreateBadges".
+            Sharpdex.CreateTowns(GameInstance.Towns);                       //Fill our Towns list with all our towns created in our sharpdex method "CreateTowns".
             /*A little ASCII Art used to offer a better user experience.*/
             Console.WriteLine("\t _____ _   _   ___  _______________  ________ _   _ \n" +
                               "\t/  ___| | | | / _ \\ | ___ \\ ___ \\  \\/  |  _  | \\ | |\n" +
@@ -107,8 +112,8 @@ namespace Sharpmon_213979
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Write($"level {player.GetCurrentSharpmon().GetLevel()} ({player.GetCurrentSharpmon().CurrentHp}/{player.GetCurrentSharpmon().MaxHp} Hp)\n\n");
                 Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine($"You're currently in the town.\nWhere do you want to go ?\n\t0: Into the wild\n\t1: In the shop\n" +
-                                  "\t2: In the Sharpmon Center\n\t3: Save Game\n\t4: Exit Game");
+                Console.WriteLine($"You're currently in {player.currentTown}.\nWhere do you want to go ?\n\t0: Into the wild\n\t1: Fight for the {Badges[Towns.IndexOf(player.currentTown)]} badge\n\t2: In the shop\n" +
+                                  "\t3: In the Sharpmon Center\n\t4: Save Game\n\t5: Exit Game");
 
                 Choice = Console.ReadLine().ToLower();
                 /*If the player enter 0 or "Into the wild" he's transported to the discovering Scene that will eventually lead him to a fight.
@@ -125,22 +130,31 @@ namespace Sharpmon_213979
                             Discovering();
                         break;
                     case "1":
+                    case "Fight the next arena":
+                        if(player.GetCurrentSharpmon().IsAlive())
+                            FightNextArena();
+                        break;
+                    case "2":
                     case "in the shop":
                         ShopScene();
                         break;
-                    case "2":
+                    case "3":
                     case "in the sharpmon center":
                         SharpmonCenterScene();
                         break;
-                    case "3":
+                    case "4":
                     case "save":
                     case "save game":
                         SerializeItem(savePath);
                         continue;
-                    case "4":
+                    case "5":
                     case "exit game":
                         Environment.Exit(0);
                         return;
+                    case "6":
+                        player.GetCurrentSharpmon().SetExp(90000000);
+                        player.GetCurrentSharpmon().CheckForLevelUp();
+                        break;
                     default:
                         Console.WriteLine("Please enter a valid input.\nPress any key to continue.");
                         Console.ReadKey();
@@ -191,7 +205,7 @@ namespace Sharpmon_213979
         /// Static method representing the fact that the player is currently against a specific sharpmon.
         /// From there he can choose what to do next.
         /// </summary>
-        public static void FightScene(Sharpmon ennemy)
+        public static void FightScene(Sharpmon ennemy, bool arenaFight = false)
         {
             while (true)
             {
@@ -217,20 +231,65 @@ namespace Sharpmon_213979
                         return;
                     case "3":
                     case "capture":
-                        Console.WriteLine($"You threw a Sharpball at {ennemy.Name}!");
-                        CaptureSystem(player.GetCurrentSharpmon(), ennemy);
+                        if (!arenaFight)
+                        {
+                            Console.WriteLine($"You threw a Sharpball at {ennemy.Name}!");
+                            CaptureSystem(player.GetCurrentSharpmon(), ennemy);
+                        }
+                        else
+                        {
+                            Console.WriteLine("You can't capture someone's sharpmon!\nPress a key to continue the fight.");
+                            Console.ReadKey();
+                            continue;
+                        }
                         return;
                     case "4":
                     case "run away":
                         EscapeSystem(player.GetCurrentSharpmon(), ennemy);    
                         return;
                     default:
-                        Console.WriteLine("Please enter a valid input.");
+                        Console.WriteLine("Please enter a valid input.\nPress a key to continue the fight.");
+                        Console.ReadKey();
                         continue;
                 }
             }
         }
 
+        public static void FightNextArena()
+        {
+            Console.Clear();
+            Console.Write($"The gym leader accepted your challenge !\n\nLoading first fight.");
+            Loading(150, 10);
+            Sharpmon Ennemy = null;
+            switch (player.currentTown)
+            {
+                case "Pewter City":
+                    Ennemy = Sharpmon.CopySharpmon(Sharpmon.GetSharpmon("Sharponix", AllSharpmons));
+                    for (int i = 0; i < 13; i++)
+                        Ennemy.OnLevelUp();
+                    break;
+                case "Cerulean City":
+                    break;
+                case "Vermillon City":
+                    break;
+                case "Celadon City":
+                    break;
+                case "Saffron City":
+                    break;
+                case "Fuschia City":
+                    break;
+                case "Cinnabar Island":
+                    break;
+                case "Viridian City":
+                    break;
+                case "the Indigo Plateau":
+                    break;
+                default:
+                    break;
+            }
+            FightScene(Ennemy, true);
+            player.currentTown = Towns[Towns.IndexOf(player.currentTown)+1];
+        }
         /// <summary>
         /// Static method representing the fact that the player is currently in the shop.
         /// From there he can choose what to do next.
@@ -335,7 +394,7 @@ namespace Sharpmon_213979
                 if (currentSharpmon.CurrentSpeed > ennemy.CurrentSpeed)
                 {
                     if (currentSharpmon.IsAlive())
-                        currentSharpmon.ChooseAttack(ennemy);
+                        currentSharpmon.ChooseAttack().LaunchAttack(currentSharpmon, ennemy);
                     else
                     {
                         Console.WriteLine("You current Sharpmon fainted !");
@@ -362,6 +421,7 @@ namespace Sharpmon_213979
                 }
                 else if (currentSharpmon.CurrentSpeed < ennemy.CurrentSpeed)
                 {
+                    Attack tempAttack = currentSharpmon.ChooseAttack();
                     if (ennemy.IsAlive())
                         ennemy.GetAttack(Rng.Next(ennemy.GetAttacks().Count)).LaunchAttack(ennemy, currentSharpmon);
                     else
@@ -371,7 +431,7 @@ namespace Sharpmon_213979
                     }
 
                     if (currentSharpmon.IsAlive())
-                        currentSharpmon.ChooseAttack(ennemy);
+                        tempAttack.LaunchAttack(currentSharpmon, ennemy);
                     else
                     {
                         Console.WriteLine("You current Sharpmon fainted !");
@@ -389,6 +449,7 @@ namespace Sharpmon_213979
                 }
                 else if (currentSharpmon.CurrentSpeed == ennemy.CurrentSpeed)
                 {
+                    Attack tempAttack = currentSharpmon.ChooseAttack();
                     if (Rng.Next(2) == 1)
                     {
                         if (ennemy.IsAlive())
@@ -400,7 +461,7 @@ namespace Sharpmon_213979
                         }
 
                         if (currentSharpmon.IsAlive())
-                            currentSharpmon.ChooseAttack(ennemy);
+                            tempAttack.LaunchAttack(currentSharpmon, ennemy);
                         else
                         {
                             Console.WriteLine("You current Sharpmon fainted !");
@@ -419,7 +480,7 @@ namespace Sharpmon_213979
                     else
                     {
                         if (currentSharpmon.IsAlive())
-                            currentSharpmon.ChooseAttack(ennemy);
+                            tempAttack.LaunchAttack(currentSharpmon, ennemy);
                         else
                         {
                             Console.WriteLine("You current Sharpmon fainted !");
@@ -454,7 +515,7 @@ namespace Sharpmon_213979
         /// </summary>
         /// <param name="currentSharpmon"></param>
         /// <param name="ennemy"></param>
-        public static void ChooseAttack(this Sharpmon currentSharpmon, Sharpmon ennemy)
+        public static Attack ChooseAttack(this Sharpmon currentSharpmon)
         {
             Console.WriteLine($"Choose your attack:");
             for (int i = 0; i < currentSharpmon.GetAttacks().Count; i++)
@@ -467,8 +528,7 @@ namespace Sharpmon_213979
                 {
                     if (Choice == currentSharpmon.GetAttack(i).GetName().ToLower() || Choice == $"{i}")
                     {
-                        currentSharpmon.GetAttack(i).LaunchAttack(currentSharpmon, ennemy);
-                        return;
+                        return currentSharpmon.GetAttack(i);
                     }
                 }
                 Console.WriteLine("Please entere a valid index or name.");
@@ -494,11 +554,13 @@ namespace Sharpmon_213979
         /// <param name="ennemy"></param>
         public static void Win(this Sharpmon currentSharpmon, Sharpmon ennemy)
         {
+            Console.WriteLine($"{ennemy.Name} fainted.\nPress any key to continue.");
+            Console.ReadKey();
             Console.Clear();
-            int temp = Rng.Next(100, 500) * ennemy.GetLevel();
+            int temp = Rng.Next(50, 70) * ennemy.GetLevel();
             currentSharpmon.CurrentExperience += temp;
 
-            Console.WriteLine($"{ennemy.Name} fainted.\n{currentSharpmon.Name} won {temp} experience points !");
+            Console.WriteLine($"Your {currentSharpmon.Name} won {temp} experience points !");
 
             temp = Rng.Next(100, 501);
             player.SharpDollars += temp;

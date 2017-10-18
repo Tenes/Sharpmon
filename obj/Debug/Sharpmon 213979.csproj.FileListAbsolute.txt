@@ -4,3 +4,9 @@ D:\Documents\Visual Studio 2015\Projects\Sharpmon 213979\Sharpmon 213979\bin\Deb
 D:\Documents\Visual Studio 2015\Projects\Sharpmon 213979\Sharpmon 213979\obj\Debug\Sharpmon 213979.exe
 D:\Documents\Visual Studio 2015\Projects\Sharpmon 213979\Sharpmon 213979\obj\Debug\Sharpmon 213979.pdb
 D:\Documents\Visual Studio 2015\Projects\Sharpmon 213979\Sharpmon 213979\obj\Debug\Sharpmon 213979.csprojResolveAssemblyReference.cache
+D:\Documents\Visual Studio 2017\Projects\Sharpmon 213979\Sharpmon 213979\bin\Debug\Sharpmon 213979.exe.config
+D:\Documents\Visual Studio 2017\Projects\Sharpmon 213979\Sharpmon 213979\bin\Debug\Sharpmon 213979.exe
+D:\Documents\Visual Studio 2017\Projects\Sharpmon 213979\Sharpmon 213979\bin\Debug\Sharpmon 213979.pdb
+D:\Documents\Visual Studio 2017\Projects\Sharpmon 213979\Sharpmon 213979\obj\Debug\Sharpmon 213979.csprojResolveAssemblyReference.cache
+D:\Documents\Visual Studio 2017\Projects\Sharpmon 213979\Sharpmon 213979\obj\Debug\Sharpmon 213979.exe
+D:\Documents\Visual Studio 2017\Projects\Sharpmon 213979\Sharpmon 213979\obj\Debug\Sharpmon 213979.pdb

@@ -72,6 +72,11 @@ namespace Sharpmon_213979
             else Console.ForegroundColor = ConsoleColor.Gray;
         }
 
+        public void SetExp(int x)
+        {
+            this.CurrentExperience += x;
+        }
+
         //CONSTRUCTOR
         /// <summary>
         /// Constructor to create the base of every sharpmon.
@@ -93,7 +98,7 @@ namespace Sharpmon_213979
             this.Name = name;
             this.SharpmonType = sharpmonType;
             this.Level = 1;
-            this.MaxExperience = 100;
+            this.MaxExperience = (int)(4 * Math.Pow(this.Level, 3) / 5);
             this.CurrentExperience = 0;
             this.MaxHp = maxHP;
             this.CurrentHp = currentHp;
@@ -107,9 +112,7 @@ namespace Sharpmon_213979
             this.CurrentAccucary = this.BaseAccucary;
             this.BaseSpeed = speed;
             this.CurrentSpeed = this.BaseSpeed;
-            this.AttacksList = new List<Attack>();
-            this.AttacksList.Add(primaryAttack);
-            this.AttacksList.Add(secondaryAttack);
+            this.AttacksList = new List<Attack>(){primaryAttack, secondaryAttack};
         }
         /// <summary>
         /// Constructor used when a full copy of a Sharpmon is made (mostly for the capture system).
@@ -233,42 +236,47 @@ namespace Sharpmon_213979
         public void OnLevelUp()
         {
             this.Level += 1;
-            this.MaxExperience = LevelUpSystem(this.MaxExperience * 1.3);
+            this.MaxExperience = (int)(4 * Math.Pow(this.Level, 3) / 5);
 
-            this.MaxHp = LevelUpSystem(this.MaxHp * 1.3);
+            this.MaxHp = LevelUpSystem(((this.MaxHp * 2) * this.Level/ 100) + 10 + this.Level);
             this.CurrentHp = this.MaxHp;
 
-            this.BasePower = LevelUpSystem(this.BasePower * 1.3);
+            Sharpmon baseSharpmon = GetSharpmon(this.Name, GameInstance.AllSharpmons);
+
+            this.BasePower = LevelUpSystem(baseSharpmon.BasePower * (this.Level / 2) + baseSharpmon.BasePower);
             this.CurrentPower = this.BasePower;
 
-            this.BaseDefense = LevelUpSystem(this.BaseDefense * 1.3);
+            this.BaseDefense = LevelUpSystem(baseSharpmon.BaseDefense * (this.Level / 2) + baseSharpmon.BaseDefense);
             this.CurrentDefense = this.BaseDefense;
 
-            this.BaseDodge = LevelUpSystem(this.BaseDodge * 1.3);
+            this.BaseDodge = LevelUpSystem(baseSharpmon.BaseDodge * (this.Level / 2) + baseSharpmon.BaseDodge);
             this.CurrentDodge = this.BaseDodge;
 
-            this.BaseAccucary = LevelUpSystem(this.BaseAccucary * 1.3);
+            this.BaseAccucary = LevelUpSystem(baseSharpmon.BaseAccucary * (this.Level / 2) + baseSharpmon.BaseAccucary);
             this.CurrentAccucary = this.BaseAccucary;
 
-            this.BaseSpeed = LevelUpSystem(this.BaseSpeed * 1.3);
+            this.BaseSpeed = LevelUpSystem(baseSharpmon.BaseSpeed * (this.Level / 2) + baseSharpmon.BaseSpeed);
             this.CurrentSpeed = this.BaseSpeed;
 
             if (this.Level == 10)
             {
-                IEnumerable<Attack> randomAttack = from attack in GameInstance.AllAttacks
-                                                   where (attack.GetElementalType() == this.GetElementalType() || attack.GetElementalType() == "NORMAL") && 
-                                                   attack.GetName() != this.GetAttack(0).GetName() && attack.GetName() != this.GetAttack(1).GetName()
-                                                   select attack;
-                this.AttacksList.Add(randomAttack.ToList()[GameInstance.Rng.Next(0, randomAttack.Count())]);
+                List<Attack> randomAttack =
+                    GameInstance.AllAttacks
+                    .Where(attack => (attack.GetElementalType() == this.GetElementalType() ||
+                                   attack.GetElementalType() == "NORMAL")
+                                  && attack.GetName() != this.GetAttack(0).GetName() &&
+                                  attack.GetName() != this.GetAttack(1).GetName()).ToList();
+                this.AttacksList.Add(randomAttack[GameInstance.Rng.Next(0, randomAttack.Count())]);
             }
             if (this.Level == 30)
             {
-                IEnumerable<Attack> randomAttack = from attack in GameInstance.AllAttacks
-                                                   where (attack.GetElementalType() == this.GetElementalType() || attack.GetElementalType() == "NORMAL") &&
-                                                   attack.GetName() != this.GetAttack(0).GetName() && attack.GetName() != this.GetAttack(1).GetName() &&
-                                                   attack.GetName() != this.GetAttack(2).GetName()
-                                                   select attack;
-                this.AttacksList.Add(randomAttack.ToList()[GameInstance.Rng.Next(0, randomAttack.Count())]);
+                List<Attack> randomAttack = GameInstance.AllAttacks
+                    .Where(attack => (attack.GetElementalType() == this.GetElementalType() ||
+                                      attack.GetElementalType() == "NORMAL") &&
+                                     attack.GetName() != this.GetAttack(0).GetName() &&
+                                     attack.GetName() != this.GetAttack(1).GetName() &&
+                                     attack.GetName() != this.GetAttack(2).GetName()).ToList();
+                this.AttacksList.Add(randomAttack[GameInstance.Rng.Next(0, randomAttack.Count())]);
             }
         }
 
@@ -317,9 +325,7 @@ namespace Sharpmon_213979
         /// <returns></returns>
         public static Sharpmon GetSharpmon(string Name, List<Sharpmon> sharpmons )
         {
-            return ExtractSharpmon(from sharpmon in sharpmons
-                                   where Name == sharpmon.Name
-                                   select sharpmon);
+            return sharpmons.FirstOrDefault(sharpmon => sharpmon.Name == Name);
         }
 
         /// <summary>
@@ -329,8 +335,7 @@ namespace Sharpmon_213979
         /// <returns></returns>
         public static Sharpmon GetRandomSharpmon(int range)
         {
-            return ExtractSharpmon(from sharpmon in GameInstance.AllSharpmons
-                                   select GameInstance.AllSharpmons[range]);
+            return GameInstance.AllSharpmons[range];
         }
 
         /// <summary>
@@ -344,21 +349,6 @@ namespace Sharpmon_213979
         {
             return sharpmons.Contains(GetSharpmon(Name, sharpmons));
         }
-
-        /// <summary>
-        /// Extension of the GetSharpmon method that returns the first occurence of sharpmon
-        /// if there is one in the IEnumerable created by the LINQ used in the GetSharpmon method.
-        /// </summary>
-        /// <param name="sharpmon"></param>
-        /// <returns></returns>
-        public static Sharpmon ExtractSharpmon(IEnumerable<Sharpmon> sharpmon)
-        {
-            if (sharpmon.Count() > 0)
-                return sharpmon.First();
-            else
-                return null;
-        }
-
         /// <summary>
         /// Method for saving all the data of the instance of an attack type object
         /// </summary>

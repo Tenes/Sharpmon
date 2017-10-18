@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization;
 
 namespace Sharpmon_213979
@@ -12,6 +14,9 @@ namespace Sharpmon_213979
         public int SharpDollars { get; set; }       //Props used to Get/Set the sharpDollars of a player.
         private List<Sharpmon> SharpmonsList;       //The list that stocks all the player's sharpmons.
         private List<Item> ItemsList;               //The list that stocks all the player's items.
+        public string currentTown { get; set; }
+
+        //Enum containing all the arenas.
 
         //PROPERTIES
         /// <summary>
@@ -48,6 +53,7 @@ namespace Sharpmon_213979
             this.SharpDollars = 20000;
             this.SharpmonsList = new List<Sharpmon>();
             this.ItemsList = new List<Item>();
+            this.currentTown = GameInstance.Towns[0];
             GetFirstSharpmon();
         }
         
@@ -63,6 +69,7 @@ namespace Sharpmon_213979
             this.SharpDollars = info.GetInt32("SharpDollars");
             this.SharpmonsList = (List<Sharpmon>)info.GetValue("SharpmonsList", typeof(List<Sharpmon>));
             this.ItemsList = (List<Item>)info.GetValue("ItemsList", typeof(List<Item>));
+            this.currentTown = (string)info.GetValue("currentTown", typeof(string));
         }
 
         //METHODS
@@ -156,6 +163,7 @@ namespace Sharpmon_213979
             info.AddValue("SharpDollars", this.SharpDollars, typeof(int));
             info.AddValue("SharpmonsList", this.SharpmonsList, typeof(List<Sharpmon>));
             info.AddValue("ItemsList", this.ItemsList, typeof(List<Item>));
+            info.AddValue("currentTown", this.currentTown, typeof(string));
         }
     }
 }

@@ -100,13 +100,12 @@ namespace Sharpmon_213979
         /// <summary>
         /// Method using LINQ to get an attack by its name.
         /// </summary>
-        /// <param name="Name"></param>
+        /// <param name="Name"></param>  
+        /// <param name="items"></param>
         /// <returns></returns>
         public static Item GetItem(string Name, List<Item> items)
         {
-            return ExtractItem(from item in items
-                               where Name == item.GetName()
-                               select item);
+            return items.FirstOrDefault(item => item.GetName() == Name);
         }
 
         /// <summary>
@@ -118,14 +117,7 @@ namespace Sharpmon_213979
         /// <returns></returns>
         public static int GetNumberOfItem(string Name, List<Item> items)
         {
-            int count = 0;
-            IEnumerable<Item> temp = from item in items
-                                     where Name == item.GetName()
-                                     select item;
-            foreach (Item item in temp)
-                count++;
-
-            return count;
+            return items.Count(item => item.Name == Name);
         }
 
         /// <summary>
@@ -137,20 +129,6 @@ namespace Sharpmon_213979
         public static bool ContainItem(string Name, List<Item> items)
         {
             return items.Contains(GetItem(Name, items));
-        }
-
-        /// <summary>
-        /// Method that return an item from an IEnumerable only if one exist
-        /// else, return a null (used for error handling).
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        public static Item ExtractItem(IEnumerable<Item> item)
-        {
-            if (item.Count() > 0)
-                return item.First();
-            else
-                return null;
         }
 
         /// <summary>

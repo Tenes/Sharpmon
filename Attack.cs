@@ -142,7 +142,7 @@ namespace Sharpmon_213979
                     break;
                     
                 /* Check the variable that stores the target of the attack used.
-                   If it is ENEMY, then the attack know that it acts as either 
+                   If it is ENEMY, then the attack knows that it acts as either 
                    a damage dealing type of attack or a debuff */
                 case Target.ENEMY:
                     if (this.Damage > 0)                        //Check if the attack's damage stat is greater than 0, if so it means that the attack is a damage dealing type of attack
@@ -162,7 +162,7 @@ namespace Sharpmon_213979
                             {
                                 /*Define the value of the Final Damage variable based on the many factors 
                                   (this formula is close to the real one used in pokemon).*/
-                                this.FinalDamage = AttackCalculation((double)launcher.GetLevel() * launcher.CurrentPower * (this.Damage/2) / receiver.CurrentDefense);
+                                this.FinalDamage = AttackCalculation(((2*launcher.GetLevel()/5)*launcher.CurrentPower * this.Damage / receiver.CurrentDefense)/50 + 2);
                                 /*Second check to see if the ennemy's type is resistant to this attack's type.
                                   If so, the final damage of this attack is divised by 2 (same as in the pokemon games)*/
                                 if (IsTargetResitant(receiver))
@@ -184,16 +184,14 @@ namespace Sharpmon_213979
                                 if (this.Name == "False Swipe" && receiver.CurrentHp - this.FinalDamage <= 0)
                                 {
                                     receiver.CurrentHp = 1;
-                                    Console.WriteLine($"{receiver.Name} took {this.FinalDamage} damages !\nPress any key to continue");
-                                    Console.ReadKey();
+                                    Console.WriteLine($"{receiver.Name} took {this.FinalDamage} damages !");
                                 }
                                 /*If not a False swipe attack, normally launch the attack 
                                   with the modified (or not) calculated damage from the previous checks.*/
                                 else
                                 {
                                     receiver.CurrentHp -= this.FinalDamage;
-                                    Console.WriteLine($"{receiver.Name} took {this.FinalDamage} damages !\nPress any key to continue");
-                                    Console.ReadKey();
+                                    Console.WriteLine($"{receiver.Name} took {this.FinalDamage} damages !");
                                 }
                             }
                             /*If the random number is greater than the attack success, then the attack fail.*/
@@ -349,20 +347,7 @@ namespace Sharpmon_213979
         /// <returns></returns>
         public static Attack GetAttack(string Name)
         {
-            return ExtractAttack(from attack in GameInstance.AllAttacks
-                                 where Name == attack.GetName()
-                                 select attack);
-        }
-        
-        /// <summary>
-        /// Extension of the GetAttack method which return the first occurence of 
-        /// the attack the IEnumerable given by the LINQ.
-        /// </summary>
-        /// <param name="attack"></param>
-        /// <returns></returns>
-        public static Attack ExtractAttack(IEnumerable<Attack> attack)
-        {
-            return attack.First();
+            return GameInstance.AllAttacks.FirstOrDefault(attack => attack.Name == Name);
         }
 
         /// <summary>

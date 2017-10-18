@@ -18,52 +18,52 @@ namespace Sharpmon_213979
         public static void CreateAttacks(List<Attack> AllAttacks)
         {
             //OFFENSIVE ATTACKS
-            AllAttacks.Add(new Attack("Scratch", Effect.Target.ENEMY, 3));
-            AllAttacks.Add(new Attack("Pound", Effect.Target.ENEMY, 2));
-            AllAttacks.Add(new Attack("False Swipe", Effect.Target.ENEMY, 5));
-            AllAttacks.Add(new Attack("Tri Attack", Effect.Target.ENEMY, 8));
+            AllAttacks.Add(new Attack("Scratch", Effect.Target.ENEMY, 30));
+            AllAttacks.Add(new Attack("Pound", Effect.Target.ENEMY, 20));
+            AllAttacks.Add(new Attack("False Swipe", Effect.Target.ENEMY, 50));
+            AllAttacks.Add(new Attack("Tri Attack", Effect.Target.ENEMY, 80));
 
-            AllAttacks.Add(new Attack("Poison Sting", Attack.ElementalType.POISON, Effect.Target.ENEMY, 3));
+            AllAttacks.Add(new Attack("Poison Sting", Attack.ElementalType.POISON, Effect.Target.ENEMY, 30));
 
-            AllAttacks.Add(new Attack("Peck", Attack.ElementalType.FLYING, Effect.Target.ENEMY, 3));
-            AllAttacks.Add(new Attack("Wing Attack", Attack.ElementalType.FLYING, Effect.Target.ENEMY, 5));
-            AllAttacks.Add(new Attack("Drill Peck", Attack.ElementalType.FLYING, Effect.Target.ENEMY, 6));
-            AllAttacks.Add(new Attack("Aeroblast", Attack.ElementalType.FLYING, Effect.Target.ENEMY, 10));
-            AllAttacks.Add(new Attack("Sky Attack", Attack.ElementalType.FLYING, Effect.Target.ENEMY, 15));
+            AllAttacks.Add(new Attack("Peck", Attack.ElementalType.FLYING, Effect.Target.ENEMY, 30));
+            AllAttacks.Add(new Attack("Wing Attack", Attack.ElementalType.FLYING, Effect.Target.ENEMY, 50));
+            AllAttacks.Add(new Attack("Drill Peck", Attack.ElementalType.FLYING, Effect.Target.ENEMY, 60));
+            AllAttacks.Add(new Attack("Aeroblast", Attack.ElementalType.FLYING, Effect.Target.ENEMY, 100));
+            AllAttacks.Add(new Attack("Sky Attack", Attack.ElementalType.FLYING, Effect.Target.ENEMY, 150));
 
-            AllAttacks.Add(new Attack("Thundershock", Attack.ElementalType.ELECTRIC, Effect.Target.ENEMY, 4));
-            AllAttacks.Add(new Attack("Thunder Punch", Attack.ElementalType.ELECTRIC, Effect.Target.ENEMY, 7));
-            AllAttacks.Add(new Attack("Thunder", Attack.ElementalType.ELECTRIC, Effect.Target.ENEMY, 12));
+            AllAttacks.Add(new Attack("Thundershock", Attack.ElementalType.ELECTRIC, Effect.Target.ENEMY, 40));
+            AllAttacks.Add(new Attack("Thunder Punch", Attack.ElementalType.ELECTRIC, Effect.Target.ENEMY, 70));
+            AllAttacks.Add(new Attack("Thunder", Attack.ElementalType.ELECTRIC, Effect.Target.ENEMY, 120));
 
-            AllAttacks.Add(new Attack("Ember", Attack.ElementalType.FIRE, Effect.Target.ENEMY, 4));
-            AllAttacks.Add(new Attack("Fire Punch", Attack.ElementalType.FIRE, Effect.Target.ENEMY, 6));
-            AllAttacks.Add(new Attack("Flamethrower", Attack.ElementalType.FIRE, Effect.Target.ENEMY, 9));
-            AllAttacks.Add(new Attack("Fire Blast", Attack.ElementalType.FIRE, Effect.Target.ENEMY, 12));
+            AllAttacks.Add(new Attack("Ember", Attack.ElementalType.FIRE, Effect.Target.ENEMY, 40));
+            AllAttacks.Add(new Attack("Fire Punch", Attack.ElementalType.FIRE, Effect.Target.ENEMY, 60));
+            AllAttacks.Add(new Attack("Flamethrower", Attack.ElementalType.FIRE, Effect.Target.ENEMY, 90));
+            AllAttacks.Add(new Attack("Fire Blast", Attack.ElementalType.FIRE, Effect.Target.ENEMY, 120));
 
-            AllAttacks.Add(new Attack("Vine Whip", Attack.ElementalType.GRASS, Effect.Target.ENEMY, 4));
-            AllAttacks.Add(new Attack("Razor Leaf", Attack.ElementalType.GRASS, Effect.Target.ENEMY, 6));
-            AllAttacks.Add(new Attack("Solar Beam", Attack.ElementalType.GRASS, Effect.Target.ENEMY, 12));
+            AllAttacks.Add(new Attack("Vine Whip", Attack.ElementalType.GRASS, Effect.Target.ENEMY, 40));
+            AllAttacks.Add(new Attack("Razor Leaf", Attack.ElementalType.GRASS, Effect.Target.ENEMY, 60));
+            AllAttacks.Add(new Attack("Solar Beam", Attack.ElementalType.GRASS, Effect.Target.ENEMY, 120));
 
-            AllAttacks.Add(new Attack("Water Gun", Attack.ElementalType.WATER, Effect.Target.ENEMY, 4));
-            AllAttacks.Add(new Attack("Dive", Attack.ElementalType.WATER, Effect.Target.ENEMY, 8));
-            AllAttacks.Add(new Attack("Hydro Cannon", Attack.ElementalType.WATER, Effect.Target.ENEMY, 15));
+            AllAttacks.Add(new Attack("Water Gun", Attack.ElementalType.WATER, Effect.Target.ENEMY, 40));
+            AllAttacks.Add(new Attack("Dive", Attack.ElementalType.WATER, Effect.Target.ENEMY, 80));
+            AllAttacks.Add(new Attack("Hydro Cannon", Attack.ElementalType.WATER, Effect.Target.ENEMY, 150));
 
-            AllAttacks.Add(new Attack("Bonemerang", Attack.ElementalType.GROUND, Effect.Target.ENEMY, 5));
-            AllAttacks.Add(new Attack("Bone Club", Attack.ElementalType.GROUND, Effect.Target.ENEMY, 7));
-            AllAttacks.Add(new Attack("Earthquake", Attack.ElementalType.GROUND, Effect.Target.ENEMY, 10));
+            AllAttacks.Add(new Attack("Bonemerang", Attack.ElementalType.GROUND, Effect.Target.ENEMY, 50));
+            AllAttacks.Add(new Attack("Bone Club", Attack.ElementalType.GROUND, Effect.Target.ENEMY, 70));
+            AllAttacks.Add(new Attack("Earthquake", Attack.ElementalType.GROUND, Effect.Target.ENEMY, 100));
 
-            AllAttacks.Add(new Attack("Twineedle", Attack.ElementalType.BUG, Effect.Target.ENEMY, 3));
-            AllAttacks.Add(new Attack("Fury Cutter", Attack.ElementalType.BUG, Effect.Target.ENEMY, 6));
-            AllAttacks.Add(new Attack("X-Scissor", Attack.ElementalType.BUG, Effect.Target.ENEMY, 9));
+            AllAttacks.Add(new Attack("Twineedle", Attack.ElementalType.BUG, Effect.Target.ENEMY, 30));
+            AllAttacks.Add(new Attack("Fury Cutter", Attack.ElementalType.BUG, Effect.Target.ENEMY, 60));
+            AllAttacks.Add(new Attack("X-Scissor", Attack.ElementalType.BUG, Effect.Target.ENEMY, 90));
 
-            AllAttacks.Add(new Attack("Rock Smash", Attack.ElementalType.FIGHTING, Effect.Target.ENEMY, 4));
-            AllAttacks.Add(new Attack("Karate Chop", Attack.ElementalType.FIGHTING, Effect.Target.ENEMY, 5));
-            AllAttacks.Add(new Attack("Jump Kick", Attack.ElementalType.FIGHTING, Effect.Target.ENEMY, 9));
-            AllAttacks.Add(new Attack("Focus Punch", Attack.ElementalType.FIGHTING, Effect.Target.ENEMY, 14));
+            AllAttacks.Add(new Attack("Rock Smash", Attack.ElementalType.FIGHTING, Effect.Target.ENEMY, 40));
+            AllAttacks.Add(new Attack("Karate Chop", Attack.ElementalType.FIGHTING, Effect.Target.ENEMY, 50));
+            AllAttacks.Add(new Attack("Jump Kick", Attack.ElementalType.FIGHTING, Effect.Target.ENEMY, 90));
+            AllAttacks.Add(new Attack("Focus Punch", Attack.ElementalType.FIGHTING, Effect.Target.ENEMY, 140));
 
-            AllAttacks.Add(new Attack("Ice Beam", Attack.ElementalType.ICE, Effect.Target.ENEMY, 10));
+            AllAttacks.Add(new Attack("Ice Beam", Attack.ElementalType.ICE, Effect.Target.ENEMY, 100));
 
-            AllAttacks.Add(new Attack("Future Sight", Attack.ElementalType.PSYCHIC, Effect.Target.ENEMY, 11));
+            AllAttacks.Add(new Attack("Future Sight", Attack.ElementalType.PSYCHIC, Effect.Target.ENEMY, 110));
 
             //BUFF-DEBUFF ATTACKS
             AllAttacks.Add(new Attack("Grawl", Effect.Target.SELF, 0, 1));
@@ -99,6 +99,33 @@ namespace Sharpmon_213979
             AllItems.Add(new Item("Carbos", 2000, "The Sharpmon base speed increases by 1", 0, 0, 0, 0, 0, 1));
         }
 
+        public static void CreateBadges(List<string> Badges)
+        {
+            Badges.Add("Boulder");
+            Badges.Add("Cascade");
+            Badges.Add("Thunder");
+            Badges.Add("Rainbow");
+            Badges.Add("Marsh");
+            Badges.Add("Soul");
+            Badges.Add("Volcano");
+            Badges.Add("Earth");
+            Badges.Add("The Elite Four");
+        }
+
+        public static void CreateTowns(List<string> Towns)
+        {
+
+            Towns.Add("Pewter City");
+            Towns.Add("Cerulean City");
+            Towns.Add("Vermillon City");
+            Towns.Add("Celadon City");
+            Towns.Add("Saffron City");
+            Towns.Add("Fuschia City");
+            Towns.Add("Cinnabar Island");
+            Towns.Add("Viridian City");
+            Towns.Add("the Indigo Plateau");
+        }
+
         public static void CreateSharpmons(List<Sharpmon> AllSharpmons)
         {
             //STARTERS
@@ -124,6 +151,7 @@ namespace Sharpmon_213979
             AllSharpmons.Add(new Sharpmon("Sharplett", Sharpmon.ElementalType.GROUND, 11, 11, 2, 2, 1, 1, 1, Attack.GetAttack("Scratch"), Attack.GetAttack("Sand-Attack")));
             AllSharpmons.Add(new Sharpmon("Sharpodude", Sharpmon.ElementalType.GROUND, 12, 12, 1, 2, 1, 3, 1, Attack.GetAttack("Rock Smash"), Attack.GetAttack("Shell")));
             AllSharpmons.Add(new Sharpmon("Sharpix", Sharpmon.ElementalType.FIRE, 8, 8, 3, 2, 2, 3, 3, Attack.GetAttack("Ember"), Attack.GetAttack("Tail Whip")));
+            AllSharpmons.Add(new Sharpmon("Sharponix", Sharpmon.ElementalType.GROUND, 13, 13, 2, 2, 1, 1, 1, Attack.GetAttack("Pound"), Attack.GetAttack("Shell")));
             AllSharpmons.Add(new Sharpmon("Sharpowlithe", Sharpmon.ElementalType.FIRE, 9, 9, 2, 1, 2, 2, 1, Attack.GetAttack("Scratch"), Attack.GetAttack("Ember")));
             AllSharpmons.Add(new Sharpmon("Sharponyta", Sharpmon.ElementalType.FIRE, 11, 11, 2, 1, 2, 2, 1, Attack.GetAttack("Ember"), Attack.GetAttack("Haste")));
             AllSharpmons.Add(new Sharpmon("Sharpbby", Sharpmon.ElementalType.WATER, 11, 11, 2, 3, 1, 2, 1, Attack.GetAttack("Scratch"), Attack.GetAttack("Shell")));
