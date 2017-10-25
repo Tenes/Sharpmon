@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
-namespace Sharpmon_213979
-{
-    [Serializable]                                  //Indicate that this class thus object is serializable (used for saving the game)
-    public class Item : Effect, ISerializable       //The Item class inherit from the Effect class and also from the ISerializable Interface (so do all the other classes).
+namespace Sharpmon
+{                     
+    [Serializable]            //Indicate that this class thus object is serializable (used for saving the game)
+    public class Item : Effect       //The Item class inherit from the Effect class and also from the ISerializable Interface (so do all the other classes).
     {
         //FIELDS
+        [JsonProperty]
         private int HealAmount;         //Variable used to know the healing effectiveness of the object.
+        [JsonProperty]
         private int LevelGiven;         //Variable used to know the level empowerement of the object.
+        [JsonProperty]
         private int MaxHpBoost;         //Variabe used to know the MaxHp's stat reinforcement of the target.
 
         //PROPERTIES
@@ -30,6 +33,7 @@ namespace Sharpmon_213979
         }
 
         //CONSTRUCTOR
+        [JsonConstructor]
         public Item(string name, int price, string description, int healAmount, int power = 0, int defense = 0, int dodge = 0, int accucary = 0, int speed = 0, int levelGiven = 0, int maxHpBoost = 0)
         {
             this.Name = name;
@@ -44,28 +48,6 @@ namespace Sharpmon_213979
             this.Speed = speed;
             this.LevelGiven = levelGiven;
             this.MaxHpBoost = maxHpBoost;
-        }
-        
-        //SPECIAL CONSTRUCTOR FOR DESERIALIZED VALUES
-        /// <summary>
-        /// Constructor only used when a save of the game is loaded in order to recreate all the exact same objects.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        public Item(SerializationInfo info, StreamingContext context)
-        {
-            this.Name = (string)info.GetValue("Name", typeof(string));
-            this.Price = (int)info.GetValue("Price", typeof(int));
-            this.SellPrice = this.Price / 2;
-            this.Description = (string)info.GetValue("Description", typeof(string));
-            this.Power = (int)info.GetValue("Power", typeof(int));
-            this.Defense = (int)info.GetValue("Defense", typeof(int));
-            this.Dodge = (int)info.GetValue("Dodge", typeof(int));
-            this.Accucary = (int)info.GetValue("Accucary", typeof(int));
-            this.Speed = (int)info.GetValue("Speed", typeof(int));
-            this.HealAmount = (int)info.GetValue("HealAmount", typeof(int));
-            this.LevelGiven = (int)info.GetValue("LevelGiven", typeof(int));
-            this.MaxHpBoost = (int)info.GetValue("MaxHpBoost", typeof(int));
         }
 
         //METHODS
@@ -129,26 +111,6 @@ namespace Sharpmon_213979
         public static bool ContainItem(string Name, List<Item> items)
         {
             return items.Contains(GetItem(Name, items));
-        }
-
-        /// <summary>
-        /// Method for saving all the data of the instance of an attack type object
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue("Name", this.Name, typeof(string));
-            info.AddValue("Price", this.Price, typeof(int));
-            info.AddValue("Description", this.Description, typeof(string));
-            info.AddValue("Power", this.Power, typeof(int));
-            info.AddValue("Defense", this.Defense, typeof(int));
-            info.AddValue("Dodge", this.Dodge, typeof(int));
-            info.AddValue("Accucary", this.Accucary, typeof(int));
-            info.AddValue("Speed", this.Speed, typeof(int));
-            info.AddValue("HealAmount", this.HealAmount, typeof(int));
-            info.AddValue("LevelGiven", this.LevelGiven, typeof(int));
-            info.AddValue("MaxHpBoost", this.MaxHpBoost, typeof(int));
         }
     }
 }

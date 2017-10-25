@@ -2,39 +2,24 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
+using Newtonsoft.Json;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Sharpmon_213979
+namespace Sharpmon
 {
     public static class GameInstance
     {
         //FIELDS
-        /*Those three lists will act as a bestiary for our game, containing all the
-         posiible object that our own object will be based on in our game.*/
-        public static List<Attack> AllAttacks = new List<Attack>();         //The list that will contain every existing attack of the game.
-        public static List<Item> AllItems = new List<Item>();               //The list that will contain every existing item of the game.
-        public static List<Sharpmon> AllSharpmons = new List<Sharpmon>();   //The list that will contain every existing sharpmon of the game.
-        public static List<string> Badges = new List<string>();             //The list that will contain every existing badges of the game.
-        public static List<string> Towns = new List<string>();              //The list that will contain every existing towns of the game.
         public static Random Rng = new Random();                            //The random object that every class will use when it comes to Random number generator.
         public static string Choice;                                        //The value that will be used for stocking (almost) every choices in the game, one at a time.
         private static Player player;                                       //The one and only, main player of the game.
-        private static string savePath = "C:\\Users\\Public\\SharpmonSave.txt"; //The path to your future (or existing) save file of the game. Note that this is MY own path, it may not work for you.
+        private static string savePath = "SharpmonSave.json"; //The path to your future (or existing) save file of the game. Note that this is MY own path, it may not work for you.
 
         //METHODS
         public static void Run()
-        {
-            Sharpdex.CreateAttacks(GameInstance.AllAttacks);                //Fill our Attacks list with all our attack created in our sharpdex method "CreateAttacks".
-            Sharpdex.CreateItems(GameInstance.AllItems);                    //Fill our Items list with all our items created in our sharpdex method "CreateItems".
-            Sharpdex.CreateSharpmons(GameInstance.AllSharpmons);            //Fill our Sharpmons list with all our sharpmon created in our sharpdex method "CreateSharpmons".
-            Sharpdex.CreateBadges(GameInstance.Badges);                     //Fill our Badges list with all our bages created in our sharpdex method "CreateBadges".
-            Sharpdex.CreateTowns(GameInstance.Towns);                       //Fill our Towns list with all our towns created in our sharpdex method "CreateTowns".
+        {   
             /*A little ASCII Art used to offer a better user experience.*/
             Console.WriteLine("\t _____ _   _   ___  _______________  ________ _   _ \n" +
                               "\t/  ___| | | | / _ \\ | ___ \\ ___ \\  \\/  |  _  | \\ | |\n" +
@@ -112,7 +97,7 @@ namespace Sharpmon_213979
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Write($"level {player.GetCurrentSharpmon().GetLevel()} ({player.GetCurrentSharpmon().CurrentHp}/{player.GetCurrentSharpmon().MaxHp} Hp)\n\n");
                 Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine($"You're currently in {player.currentTown}.\nWhere do you want to go ?\n\t0: Into the wild\n\t1: Fight for the {Badges[Towns.IndexOf(player.currentTown)]} badge\n\t2: In the shop\n" +
+                Console.WriteLine($"You're currently in {player.currentTown}.\nWhere do you want to go ?\n\t0: Into the wild\n\t1: Fight for the {Sharpdex.Badges[Sharpdex.Towns.IndexOf(player.currentTown)]} badge\n\t2: In the shop\n" +
                                   "\t3: In the Sharpmon Center\n\t4: Save Game\n\t5: Exit Game");
 
                 Choice = Console.ReadLine().ToLower();
@@ -187,11 +172,11 @@ namespace Sharpmon_213979
 
             Sharpmon Ennemy;
             if (player.GetCurrentSharpmon().GetLevel() < 20)
-                Ennemy = Sharpmon.CopySharpmon(Sharpmon.GetRandomSharpmon(Rng.Next(AllSharpmons.Count - 18)));      //Allow the discovering of common Sharpmons.
+                Ennemy = Sharpmon.CopySharpmon(Sharpmon.GetRandomSharpmon(Rng.Next(Sharpdex.AllSharpmons.Count - 18)));      //Allow the discovering of common Sharpmons.
             else if (player.GetCurrentSharpmon().GetLevel() >= 20 && player.GetCurrentSharpmon().GetLevel() < 40)
-                Ennemy = Sharpmon.CopySharpmon(Sharpmon.GetRandomSharpmon(Rng.Next(AllSharpmons.Count - 5)));       //Allow the discovering of a possible Advanced Sharpmon.
+                Ennemy = Sharpmon.CopySharpmon(Sharpmon.GetRandomSharpmon(Rng.Next(Sharpdex.AllSharpmons.Count - 5)));       //Allow the discovering of a possible Advanced Sharpmon.
             else 
-                Ennemy = Sharpmon.CopySharpmon(Sharpmon.GetRandomSharpmon(Rng.Next(AllSharpmons.Count)));           //Allow the discovering of a possible Legendary Sharpmon.
+                Ennemy = Sharpmon.CopySharpmon(Sharpmon.GetRandomSharpmon(Rng.Next(Sharpdex.AllSharpmons.Count)));           //Allow the discovering of a possible Legendary Sharpmon.
 
             for (int i = 0; i < player.GetCurrentSharpmon().GetLevel()-1; i++)
                 Ennemy.OnLevelUp();
@@ -264,7 +249,7 @@ namespace Sharpmon_213979
             switch (player.currentTown)
             {
                 case "Pewter City":
-                    Ennemy = Sharpmon.CopySharpmon(Sharpmon.GetSharpmon("Sharponix", AllSharpmons));
+                    Ennemy = Sharpmon.CopySharpmon(Sharpmon.GetSharpmon("Sharponix", Sharpdex.AllSharpmons));
                     for (int i = 0; i < 13; i++)
                         Ennemy.OnLevelUp();
                     break;
@@ -288,7 +273,7 @@ namespace Sharpmon_213979
                     break;
             }
             FightScene(Ennemy, true);
-            player.currentTown = Towns[Towns.IndexOf(player.currentTown)+1];
+            player.currentTown = Sharpdex.Towns[Sharpdex.Towns.IndexOf(player.currentTown)+1];
         }
         /// <summary>
         /// Static method representing the fact that the player is currently in the shop.
@@ -782,7 +767,7 @@ namespace Sharpmon_213979
         public static void Inventory()
         {
             Console.WriteLine("Your inventory contains:");
-            foreach (Item item in GameInstance.AllItems)
+            foreach (Item item in Sharpdex.AllItems)
             {
                 if (Item.ContainItem(item.GetName(), player.GetItems()))
                     Console.WriteLine($"{item.GetName()} \tx{Item.GetNumberOfItem(item.GetName(), player.GetItems())}\t|{item.GetDescription()}");
@@ -794,7 +779,7 @@ namespace Sharpmon_213979
         public static void CheckEmptyInventory()
         {
             int hiddenCount = 0;
-            foreach (Item possibeItem in AllItems)
+            foreach (Item possibeItem in Sharpdex.AllItems)
             {
                 if (Item.ContainItem(possibeItem.GetName(), player.GetItems()))
                     hiddenCount++;
@@ -810,8 +795,8 @@ namespace Sharpmon_213979
             Console.Clear();
             Console.WriteLine($"\tYou currently have {player.SharpDollars} sharpdollars.\n" +
                               "\tWhich item do you want ? (Press enter if you want to leave)");
-            for (int i = 0; i < AllItems.Count; i++)
-                Console.WriteLine($"\t{i}: {AllItems[i].GetName()} \tPrice: {AllItems[i].GetPrice()}");
+            for (int i = 0; i < Sharpdex.AllItems.Count; i++)
+                Console.WriteLine($"\t{i}: {Sharpdex.AllItems[i].GetName()} \tPrice: {Sharpdex.AllItems[i].GetPrice()}");
 
             while (true)
             {
@@ -819,22 +804,22 @@ namespace Sharpmon_213979
                 int ParsedChoise = 0;
                 if (Choice != "")
                 {
-                    for (int i = 0; i < AllItems.Count; i++)
+                    for (int i = 0; i < Sharpdex.AllItems.Count; i++)
                     {
-                        if (Choice == $"{AllItems[i].GetName().ToLower()}" || Choice == $"{i}")
+                        if (Choice == $"{Sharpdex.AllItems[i].GetName().ToLower()}" || Choice == $"{i}")
                         {
-                            Console.WriteLine($"How much {AllItems[i].GetName()} do you want ?");
+                            Console.WriteLine($"How much {Sharpdex.AllItems[i].GetName()} do you want ?");
                             Choice = Console.ReadLine().ToLower();
-                            if ((int.TryParse(Choice, out ParsedChoise) && ParsedChoise > 0) && player.SharpDollars - AllItems[i].GetPrice()* ParsedChoise >= 0)
+                            if ((int.TryParse(Choice, out ParsedChoise) && ParsedChoise > 0) && player.SharpDollars - Sharpdex.AllItems[i].GetPrice()* ParsedChoise >= 0)
                             {
                                 for (int j = ParsedChoise; j > 0; j--)
                                 {
-                                    player.AddItem(AllItems[i]);
-                                    player.SharpDollars -= AllItems[i].GetPrice();
+                                    player.AddItem(Sharpdex.AllItems[i]);
+                                    player.SharpDollars -= Sharpdex.AllItems[i].GetPrice();
                                 }
 
                                 Console.WriteLine(
-                                    $"You successfully bought {ParsedChoise} {AllItems[i].GetName()}\n");
+                                    $"You successfully bought {ParsedChoise} {Sharpdex.AllItems[i].GetName()}\n");
                                 Console.Write("Returning to shop");
                                 Loading(150, 10);
                                 return;
@@ -867,7 +852,7 @@ namespace Sharpmon_213979
             else
             {
                 Console.WriteLine("Your inventory contains:");
-                foreach (Item item in AllItems)
+                foreach (Item item in Sharpdex.AllItems)
                 {
                     if (Item.ContainItem(item.GetName(), player.GetItems()))
                         Console.WriteLine($"{item.GetName()} x{Item.GetNumberOfItem(item.GetName(), player.GetItems())} \tSelling Price:{item.GetSellPrice()}  |{item.GetDescription()}");
@@ -928,10 +913,11 @@ namespace Sharpmon_213979
         /// <param name="fileName"></param>
         public static void SerializeItem(string fileName)
         {
-            FileStream s = new FileStream(fileName, FileMode.Create);
-            BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Serialize(s, player);
-            s.Close();
+            using (StreamWriter file = File.CreateText(savePath))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(file, player);
+            }
         }
         
         /// <summary>
@@ -940,10 +926,11 @@ namespace Sharpmon_213979
         /// <param name="fileName"></param>
         public static void DeserializeItem(string fileName)
         {
-            FileStream s = new FileStream(fileName, FileMode.Open);
-            BinaryFormatter formatter = new BinaryFormatter();
-            player = (Player)formatter.Deserialize(s);
-            s.Close();
+            using (StreamReader file = File.OpenText(savePath))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                player = (Player)serializer.Deserialize(file, typeof(Player));
+            }
         }
     }
 }

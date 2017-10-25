@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
-namespace Sharpmon_213979
-{
-    [Serializable]                                  //Indicate that this class thus object is serializable (used for saving the game)
-    public class Attack : Effect, ISerializable     //The Attack class inherit from the Effect class and also from the ISerializable Interface (so do all the other classes).
+namespace Sharpmon
+{       
+    [Serializable]                  //Indicate that this class thus object is serializable (used for saving the game)
+    public class Attack : Effect     //The Attack class inherit from the Effect class and also from the ISerializable Interface (so do all the other classes).
     {
         //FIELDS
-        private int FinalDamage;                    //Variable we later use to know the TRUE damage an attack will do taking many factor in count.
+        [JsonProperty]
+        private int FinalDamage; //Variable we later use to know the TRUE damage an attack will do taking many factor in count.
+        [JsonProperty]
         private double AttackSuccess;               //Variable we later use to know the success rate of an attack against a specific sharpmon at a specific moment.
         public enum ElementalType { FIRE, BUG, ICE, GROUND, WATER, GRASS, ELECTRIC, NORMAL, POISON, FLYING, FIGHTING, PSYCHIC }     //An enum that allow use to specify the element of the attack.
+        [JsonProperty]
         private ElementalType AttackType;           //The variable that stocks the element of the said attack. This does imply the papper-rock-cissor weakness and advantage of each type against one another.
 
         //PROPERTIES
@@ -48,6 +51,7 @@ namespace Sharpmon_213979
         /// <param name="dodge"></param>
         /// <param name="accucary"></param>
         /// <param name="speed"></param>
+        [JsonConstructor]
         public Attack(string name, ElementalType attackType, Target effectTarget, int damage = 0, int power = 0, int defense = 0, int dodge = 0, int accucary = 0, int speed = 0)
         {
             this.Name = name;
@@ -87,25 +91,6 @@ namespace Sharpmon_213979
             this.Speed = speed;
             this.FinalDamage = 0;
             this.AttackSuccess = 0;
-        }
-
-        //SPECIAL CONSTRUCTOR FOR DESERIALIZED VALUES
-        /// <summary>
-        /// Constructor only used when a save of the game is loaded in order to recreate all the exact same objects.
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        public Attack(SerializationInfo info, StreamingContext context)
-        {
-            this.Name = (string)info.GetValue("Name", typeof(string));
-            this.Damage = (int)info.GetValue("Damage", typeof(int));
-            this.Power = (int)info.GetValue("Power", typeof(int));
-            this.Defense = (int)info.GetValue("Defense", typeof(int));
-            this.Dodge = (int)info.GetValue("Dodge", typeof(int));
-            this.Accucary = (int)info.GetValue("Accucary", typeof(int));
-            this.Speed = (int)info.GetValue("Speed", typeof(int));
-            this.EffectTarget = (Target)info.GetValue("EffectTarget", typeof(Target));
-            this.AttackType = (ElementalType)info.GetValue("AttackType", typeof(ElementalType));
         }
 
         //METHODS
@@ -347,25 +332,7 @@ namespace Sharpmon_213979
         /// <returns></returns>
         public static Attack GetAttack(string Name)
         {
-            return GameInstance.AllAttacks.FirstOrDefault(attack => attack.Name == Name);
-        }
-
-        /// <summary>
-        /// Method for saving all the data of the instance of an attack type object
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue("Name", this.Name, typeof(string));
-            info.AddValue("Damage", this.Damage, typeof(int));
-            info.AddValue("Power", this.Power, typeof(int));
-            info.AddValue("Defense", this.Defense, typeof(int));
-            info.AddValue("Dodge", this.Dodge, typeof(int));
-            info.AddValue("Accucary", this.Accucary, typeof(int));
-            info.AddValue("Speed", this.Speed, typeof(int));
-            info.AddValue("EffectTarget", this.EffectTarget, typeof(Target));
-            info.AddValue("AttackType", this.AttackType, typeof(ElementalType));
+            return Sharpdex.AllAttacks.FirstOrDefault(attack => attack.Name == Name);
         }
     }
 }

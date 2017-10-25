@@ -1,0 +1,10 @@
+C:\Users\enzob\Documents\GitHub\Sharpmon\bin\Debug\netcoreapp1.1\Sharpmon.deps.json
+C:\Users\enzob\Documents\GitHub\Sharpmon\bin\Debug\netcoreapp1.1\Sharpmon.runtimeconfig.json
+C:\Users\enzob\Documents\GitHub\Sharpmon\bin\Debug\netcoreapp1.1\Sharpmon.runtimeconfig.dev.json
+C:\Users\enzob\Documents\GitHub\Sharpmon\bin\Debug\netcoreapp1.1\Sharpmon.dll
+C:\Users\enzob\Documents\GitHub\Sharpmon\bin\Debug\netcoreapp1.1\Sharpmon.pdb
+C:\Users\enzob\Documents\GitHub\Sharpmon\obj\Debug\netcoreapp1.1\Sharpmon.csproj.CoreCompileInputs.cache
+C:\Users\enzob\Documents\GitHub\Sharpmon\obj\Debug\netcoreapp1.1\Sharpmon.AssemblyInfoInputs.cache
+C:\Users\enzob\Documents\GitHub\Sharpmon\obj\Debug\netcoreapp1.1\Sharpmon.AssemblyInfo.cs
+C:\Users\enzob\Documents\GitHub\Sharpmon\obj\Debug\netcoreapp1.1\Sharpmon.dll
+C:\Users\enzob\Documents\GitHub\Sharpmon\obj\Debug\netcoreapp1.1\Sharpmon.pdb

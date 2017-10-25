@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
-namespace Sharpmon_213979
-{
-    [Serializable]                                  //Indicate that this class thus object is serializable (used for saving the game)
-    public class Player : ISerializable             //The Item class inherit from the Effect class and also from the ISerializable Interface (so do all the other classes).
+namespace Sharpmon
+{                         
+    [Serializable]     //Indicate that this class thus object is serializable (used for saving the game)
+    public class Player             //The Item class inherit from the Effect class and also from the ISerializable Interface (so do all the other classes).
     {
         //FIELDS
+        [JsonProperty]
         public string Name { get; set; }            //Props used to Get/Set the name variable of a player.
+        [JsonProperty]
         public int SharpDollars { get; set; }       //Props used to Get/Set the sharpDollars of a player.
+        [JsonProperty]
         private List<Sharpmon> SharpmonsList;       //The list that stocks all the player's sharpmons.
+        [JsonProperty]
         private List<Item> ItemsList;               //The list that stocks all the player's items.
+        [JsonProperty]
         public string currentTown { get; set; }
-
-        //Enum containing all the arenas.
 
         //PROPERTIES
         /// <summary>
@@ -53,23 +55,23 @@ namespace Sharpmon_213979
             this.SharpDollars = 20000;
             this.SharpmonsList = new List<Sharpmon>();
             this.ItemsList = new List<Item>();
-            this.currentTown = GameInstance.Towns[0];
+            this.currentTown = Sharpdex.Towns[0];
             GetFirstSharpmon();
         }
-        
         //SPECIAL CONSTRUCTOR FOR DESERIALIZED VALUES
         /// <summary>
         /// Constructor only used when a save of the game is loaded in order to recreate all the exact same objects.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public Player(SerializationInfo info, StreamingContext context)
+        [JsonConstructor]
+        public Player(string name, int sharpDollars, List<Sharpmon> sharpmonsList, List<Item> itemsList, string currentTown)
         {
-            this.Name = (string)info.GetValue("Name", typeof(string));
-            this.SharpDollars = info.GetInt32("SharpDollars");
-            this.SharpmonsList = (List<Sharpmon>)info.GetValue("SharpmonsList", typeof(List<Sharpmon>));
-            this.ItemsList = (List<Item>)info.GetValue("ItemsList", typeof(List<Item>));
-            this.currentTown = (string)info.GetValue("currentTown", typeof(string));
+            this.Name = name;
+            this.SharpDollars = sharpDollars;
+            this.SharpmonsList = sharpmonsList;
+            this.ItemsList = itemsList;
+            this.currentTown = currentTown;
         }
 
         //METHODS
@@ -99,12 +101,12 @@ namespace Sharpmon_213979
                   user experience. When the user press 1 or 2, another starter is displayed
                   to the player and so on. If he presses 0, he select the current sharpmon
                   displaying.*/
-                GameInstance.AllSharpmons[hiddenCount].GetColorElementalType();
+                Sharpdex.AllSharpmons[hiddenCount].GetColorElementalType();
                 Console.WriteLine($"\t\t _______________________________________\n" +
                               $"\t\t|\t\t\t\t\t|\n" +
-                              $"\t\t|\t {GameInstance.AllSharpmons[hiddenCount].Name}\tHp: {GameInstance.AllSharpmons[hiddenCount].MaxHp} \t\t|\n" +
-                              $"\t\t|\t Attacks:\t{GameInstance.AllSharpmons[hiddenCount].GetAttack(0).GetName()}   \t|\n" +
-                              $"\t\t|\t\t\t{GameInstance.AllSharpmons[hiddenCount].GetAttack(1).GetName()}    \t|\n" +
+                              $"\t\t|\t {Sharpdex.AllSharpmons[hiddenCount].Name}\tHp: {Sharpdex.AllSharpmons[hiddenCount].MaxHp} \t\t|\n" +
+                              $"\t\t|\t Attacks:\t{Sharpdex.AllSharpmons[hiddenCount].GetAttack(0).GetName()}   \t|\n" +
+                              $"\t\t|\t\t\t{Sharpdex.AllSharpmons[hiddenCount].GetAttack(1).GetName()}    \t|\n" +
                               $"\t\t|_______________________________________|\n");
                 Console.ForegroundColor = ConsoleColor.Gray;
 
@@ -118,7 +120,7 @@ namespace Sharpmon_213979
                 /*Add the displayed sharpmon to the player's list of sharpmons.*/
                 if (choice == "0")
                 {
-                    this.AddSharpmon(Sharpmon.GetSharpmon(GameInstance.AllSharpmons[hiddenCount].Name, GameInstance.AllSharpmons));
+                    this.AddSharpmon(Sharpmon.GetSharpmon(Sharpdex.AllSharpmons[hiddenCount].Name, Sharpdex.AllSharpmons));
                     return;
                 }
                 /*Display the last displayed starter to the player only if it's not the first starter.*/
@@ -150,20 +152,6 @@ namespace Sharpmon_213979
         public void AddItem(Item item)
         {
             this.ItemsList.Add(item);
-        }
-        
-        /// <summary>
-        /// Method for saving all the data of the instance of an attack type object
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue("Name", this.Name, typeof(string));
-            info.AddValue("SharpDollars", this.SharpDollars, typeof(int));
-            info.AddValue("SharpmonsList", this.SharpmonsList, typeof(List<Sharpmon>));
-            info.AddValue("ItemsList", this.ItemsList, typeof(List<Item>));
-            info.AddValue("currentTown", this.currentTown, typeof(string));
         }
     }
 }

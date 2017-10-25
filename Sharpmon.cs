@@ -1,35 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Runtime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
-namespace Sharpmon_213979
+namespace Sharpmon
 {
-    [Serializable]                                              //Indicate that this class thus object is serializable (used for saving the game)
-    public class Sharpmon : ISerializable                       //The Item class inherit from the Effect class and also from the ISerializable Interface (so do all the other classes).
+    [Serializable]                             //Indicate that this class thus object is serializable (used for saving the game)
+    public class Sharpmon                       //The Item class inherit from the Effect class and also from the ISerializable Interface (so do all the other classes).
     {
         //FIELDS
+        [JsonProperty]
         public string Name { get; set; }
+        [JsonProperty]
         private int Level;
+        [JsonProperty]
         public int MaxExperience { get; set; }
+        [JsonProperty]
         public int CurrentExperience { get; set; }
+        [JsonProperty]
         public int MaxHp { get; set; }
+        [JsonProperty]
         public int CurrentHp { get; set; }
+        [JsonProperty]
         public int BasePower { get; set; }
+        [JsonProperty]
         public int CurrentPower { get; set; }
+        [JsonProperty]
         public int BaseDefense { get; set; }
+        [JsonProperty]
         public int CurrentDefense { get; set; }
+        [JsonProperty]
         public int BaseDodge { get; set; }
+        [JsonProperty]
         public int CurrentDodge { get; set; }
+        [JsonProperty]
         public int BaseAccucary { get; set; }
+        [JsonProperty]
         public int CurrentAccucary { get; set; }
+        [JsonProperty]
         public int BaseSpeed { get; set; }
+        [JsonProperty]
         public int CurrentSpeed { get; set; }
         public enum ElementalType { FIRE, GROUND, WATER, GRASS, ELECTRIC, NORMAL, FLYING, BUG, FIGHTING, PSYCHIC }
+        [JsonProperty]
         public ElementalType SharpmonType { get; set; }
+        [JsonProperty]
         private List<Attack> AttacksList;
 
         //PROPERTIES
@@ -129,14 +148,15 @@ namespace Sharpmon_213979
         /// <param name="attackList"></param>
         /// <param name="level"></param>
         /// <param name="maxExperience"></param>
+        [JsonConstructor]
         public Sharpmon(string name, ElementalType sharpmonType, int maxHP, int currentHp, int power, int defense, int dodge, int accucary, int speed,
-            List<Attack> attackList , int level, int maxExperience)
+            List<Attack> attackList , int level, int maxExperience, int CurrentExperience = 0)
         {
             this.Name = name;
             this.SharpmonType = sharpmonType;
             this.Level = level;
             this.MaxExperience = maxExperience;
-            this.CurrentExperience = 0;
+            this.CurrentExperience = CurrentExperience;
             this.MaxHp = maxHP;
             this.CurrentHp = currentHp;
             this.BasePower = power;
@@ -150,29 +170,6 @@ namespace Sharpmon_213979
             this.BaseSpeed = speed;
             this.CurrentSpeed = this.BaseSpeed;
             this.AttacksList = attackList;
-        }
-
-        //SPECIAL CONSTRUCTOR FOR DESERIALIZED VALUES
-        public Sharpmon(SerializationInfo info, StreamingContext context)
-        {
-            this.Name = (string)info.GetValue("Name", typeof(string));
-            this.SharpmonType = (ElementalType) info.GetValue("SharpmonType", typeof(ElementalType));
-            this.Level = (int)info.GetValue("Level", typeof(int));
-            this.MaxExperience = (int)info.GetValue("MaxExperience", typeof(int));
-            this.CurrentExperience = (int)info.GetValue("CurrentExperience", typeof(int));
-            this.MaxHp = (int)info.GetValue("MaxHp", typeof(int));
-            this.CurrentHp = (int)info.GetValue("CurrentHp", typeof(int));
-            this.BasePower = (int)info.GetValue("BasePower", typeof(int));
-            this.CurrentPower = this.BasePower;
-            this.BaseDefense = (int)info.GetValue("BaseDefense", typeof(int));
-            this.CurrentDefense = this.BaseDefense;
-            this.BaseDodge = (int)info.GetValue("BaseDodge", typeof(int));
-            this.CurrentDodge = this.BaseDodge;
-            this.BaseAccucary = (int)info.GetValue("BaseAccucary", typeof(int));
-            this.CurrentAccucary = this.BaseAccucary;
-            this.BaseSpeed = (int)info.GetValue("BaseSpeed", typeof(int));
-            this.CurrentSpeed = this.BaseSpeed;
-            this.AttacksList = (List<Attack>)info.GetValue("AttacksList", typeof(List<Attack>));
         }
 
         //METHODS
@@ -241,7 +238,7 @@ namespace Sharpmon_213979
             this.MaxHp = LevelUpSystem(((this.MaxHp * 2) * this.Level/ 100) + 10 + this.Level);
             this.CurrentHp = this.MaxHp;
 
-            Sharpmon baseSharpmon = GetSharpmon(this.Name, GameInstance.AllSharpmons);
+            Sharpmon baseSharpmon = GetSharpmon(this.Name, Sharpdex.AllSharpmons);
 
             this.BasePower = LevelUpSystem(baseSharpmon.BasePower * (this.Level / 2) + baseSharpmon.BasePower);
             this.CurrentPower = this.BasePower;
@@ -261,7 +258,7 @@ namespace Sharpmon_213979
             if (this.Level == 10)
             {
                 List<Attack> randomAttack =
-                    GameInstance.AllAttacks
+                    Sharpdex.AllAttacks
                     .Where(attack => (attack.GetElementalType() == this.GetElementalType() ||
                                    attack.GetElementalType() == "NORMAL")
                                   && attack.GetName() != this.GetAttack(0).GetName() &&
@@ -270,7 +267,7 @@ namespace Sharpmon_213979
             }
             if (this.Level == 30)
             {
-                List<Attack> randomAttack = GameInstance.AllAttacks
+                List<Attack> randomAttack = Sharpdex.AllAttacks
                     .Where(attack => (attack.GetElementalType() == this.GetElementalType() ||
                                       attack.GetElementalType() == "NORMAL") &&
                                      attack.GetName() != this.GetAttack(0).GetName() &&
@@ -335,7 +332,7 @@ namespace Sharpmon_213979
         /// <returns></returns>
         public static Sharpmon GetRandomSharpmon(int range)
         {
-            return GameInstance.AllSharpmons[range];
+            return Sharpdex.AllSharpmons[range];
         }
 
         /// <summary>
@@ -348,27 +345,6 @@ namespace Sharpmon_213979
         public static bool ContainSharpmon(string Name, List<Sharpmon> sharpmons)
         {
             return sharpmons.Contains(GetSharpmon(Name, sharpmons));
-        }
-        /// <summary>
-        /// Method for saving all the data of the instance of an attack type object
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="context"></param>
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            info.AddValue("Name", this.Name, typeof(string));
-            info.AddValue("SharpmonType", this.SharpmonType, typeof(ElementalType));
-            info.AddValue("Level", this.Level, typeof(int));
-            info.AddValue("MaxExperience", this.MaxExperience, typeof(int));
-            info.AddValue("CurrentExperience", this.CurrentExperience, typeof(int));
-            info.AddValue("MaxHp", this.MaxHp, typeof(int));
-            info.AddValue("CurrentHp", this.CurrentHp, typeof(int));
-            info.AddValue("BasePower", this.BasePower, typeof(int));
-            info.AddValue("BaseDefense", this.BaseDefense, typeof(int));
-            info.AddValue("BaseDodge", this.BaseDodge, typeof(int));
-            info.AddValue("BaseAccucary", this.BaseAccucary, typeof(int));
-            info.AddValue("BaseSpeed", this.BaseSpeed, typeof(int));
-            info.AddValue("AttacksList", this.AttacksList, typeof(List<Attack>));
         }
     }
 }

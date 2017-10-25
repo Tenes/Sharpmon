@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sharpmon_213979
+namespace Sharpmon
 {
     public static class Functions
     {

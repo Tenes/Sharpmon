@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace Sharpmon_213979
+namespace Sharpmon
 {
-    public class Program
+    class Program
     {
-        public static void Main(string[] args)
+        static void Main(string[] args)
         {
-            GameInstance.Run();     //Run the actual game.
+            GameInstance.Run();
         }
     }
 }
