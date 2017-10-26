@@ -73,7 +73,7 @@ namespace Sharpmon
         {
             Console.Clear();
             Console.WriteLine(
-                "Greetings adventurer ! \nBefore you enter the wonderful world of Sharpmon, please enter your name : ");
+                "Greetings adventurer!\nBefore you enter the wonderful world of Sharpmon, please enter your name:");
             player = new Player(Console.ReadLine());
 
             PrincipalScene();
@@ -97,7 +97,7 @@ namespace Sharpmon
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Write($"level {player.GetCurrentSharpmon().GetLevel()} ({player.GetCurrentSharpmon().CurrentHp}/{player.GetCurrentSharpmon().MaxHp} Hp)\n\n");
                 Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine($"You're currently in {player.currentTown}.\nWhere do you want to go ?\n\t0: Into the wild\n\t1: Fight for the {Sharpdex.Badges[Sharpdex.Towns.IndexOf(player.currentTown)]} badge\n\t2: In the shop\n" +
+                Console.WriteLine($"You're currently in {player.currentTown}.\nWhere do you want to go?\n\t0: Into the wild\n\t1: Fight for the {Sharpdex.Badges[Sharpdex.Towns.IndexOf(player.currentTown)]} badge\n\t2: In the shop\n" +
                                   "\t3: In the Sharpmon Center\n\t4: Save Game\n\t5: Exit Game");
 
                 Choice = Console.ReadLine().ToLower();
@@ -181,7 +181,7 @@ namespace Sharpmon
             for (int i = 0; i < player.GetCurrentSharpmon().GetLevel()-1; i++)
                 Ennemy.OnLevelUp();
 
-            Console.Write($"A wild {Ennemy.Name} appeared !\n\nLoading battle.");
+            Console.Write($"A wild {Ennemy.Name} appeared!\n\nLoading battle.");
             Loading(150, 10);
             FightScene(Ennemy);
         }
@@ -198,7 +198,7 @@ namespace Sharpmon
                 ennemy.DrawTable();
                 player.GetCurrentSharpmon().DrawTable();
 
-                Console.WriteLine("\n\t\t\tWhat will you do ?\n\t\t\t\t0: Attack\n\t\t\t\t1: Change Sharpmon\n\t\t\t\t2: Use item\n\t\t\t\t3: Capture\n\t\t\t\t4: Run away");
+                Console.WriteLine("\n\t\t\tWhat will you do?\n\t\t\t\t0: Attack\n\t\t\t\t1: Change Sharpmon\n\t\t\t\t2: Use item\n\t\t\t\t3: Capture\n\t\t\t\t4: Run away");
                 Choice = Console.ReadLine().ToLower();
                 switch (Choice)
                 {
@@ -243,7 +243,7 @@ namespace Sharpmon
         public static void FightNextArena()
         {
             Console.Clear();
-            Console.Write($"The gym leader accepted your challenge !\n\nLoading first fight.");
+            Console.Write($"The gym leader accepted your challenge!\n\nLoading first fight.");
             Loading(150, 10);
             Sharpmon Ennemy = null;
             switch (player.currentTown)
@@ -284,7 +284,7 @@ namespace Sharpmon
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("Welcome to the SharpShop !\nWhat do you want to do ?\n\t0: Buy items\n\t1: Sell items\n\t2: Exit the shop");
+                Console.WriteLine("Welcome to the SharpShop!\nWhat do you want to do?\n\t0: Buy items\n\t1: Sell items\n\t2: Exit the shop");
                 Choice = Console.ReadLine().ToLower();
                 switch (Choice)
                 {
@@ -319,7 +319,7 @@ namespace Sharpmon
         public static void SharpmonCenterScene()
         {
             Console.Clear();
-            Console.WriteLine("Welcome in the Sharpmon Center ! Do you want to heal all your sharpmons or exit the center ?\n\t0: Heal all the sharpmons");
+            Console.WriteLine("Welcome in the Sharpmon Center! Do you want to heal all your sharpmons or exit the center?\n\t0: Heal all the sharpmons");
             foreach (Sharpmon sharpmon in player.GetSharpmonses())
                 Console.WriteLine($"\t\t{sharpmon.Name} (Level {sharpmon.GetLevel()}): {sharpmon.CurrentHp}/{sharpmon.MaxHp}");
             Console.WriteLine("\n\t1: Exit center");
@@ -335,7 +335,7 @@ namespace Sharpmon
                             sharpmon.CurrentHp = sharpmon.MaxHp;
 
                         Console.Clear();
-                        Console.Write("All your Sharpmons are healed !\nYou're now exiting the center.\nExiting the center.");
+                        Console.Write("All your Sharpmons are healed!\nYou're now exiting the center.\nExiting the center.");
                         Loading(200, 10);
                         return;
                     case "1":
@@ -382,7 +382,6 @@ namespace Sharpmon
                         currentSharpmon.ChooseAttack().LaunchAttack(currentSharpmon, ennemy);
                     else
                     {
-                        Console.WriteLine("You current Sharpmon fainted !");
                         ChangeSystem(ennemy);
                         return;
                     }
@@ -396,7 +395,6 @@ namespace Sharpmon
                     }
                     if (!currentSharpmon.IsAlive())
                     {
-                        Console.WriteLine("You current Sharpmon fainted !");
                         ChangeSystem(ennemy);
                         return;
                     }
@@ -419,7 +417,6 @@ namespace Sharpmon
                         tempAttack.LaunchAttack(currentSharpmon, ennemy);
                     else
                     {
-                        Console.WriteLine("You current Sharpmon fainted !");
                         ChangeSystem(ennemy);
                         return;
                     }
@@ -449,7 +446,6 @@ namespace Sharpmon
                             tempAttack.LaunchAttack(currentSharpmon, ennemy);
                         else
                         {
-                            Console.WriteLine("You current Sharpmon fainted !");
                             ChangeSystem(ennemy);
                             return;
                         }
@@ -468,7 +464,6 @@ namespace Sharpmon
                             tempAttack.LaunchAttack(currentSharpmon, ennemy);
                         else
                         {
-                            Console.WriteLine("You current Sharpmon fainted !");
                             ChangeSystem(ennemy);
                             return;
                         }
@@ -482,7 +477,6 @@ namespace Sharpmon
                         }
                         if (!currentSharpmon.IsAlive())
                         {
-                            Console.WriteLine("You current Sharpmon fainted !");
                             ChangeSystem(ennemy);
                             return;
                         }
@@ -545,12 +539,12 @@ namespace Sharpmon
             int temp = Rng.Next(50, 70) * ennemy.GetLevel();
             currentSharpmon.CurrentExperience += temp;
 
-            Console.WriteLine($"Your {currentSharpmon.Name} won {temp} experience points !");
+            Console.WriteLine($"Your {currentSharpmon.Name} won {temp} experience points!");
 
             temp = Rng.Next(100, 501);
             player.SharpDollars += temp;
 
-            Console.Write($"You won {temp} SharpDollars !\nHeading back to town");
+            Console.Write($"You won {temp} SharpDollars!\nHeading back to town");
             Loading(150, 15);
             currentSharpmon.CheckForLevelUp();
             CheckEmptyInventory();
@@ -562,11 +556,13 @@ namespace Sharpmon
         /// <param name="ennemy"></param>
         public static void ChangeSystem(Sharpmon ennemy)
         {
+            
+            Console.WriteLine("You current Sharpmon fainted!");
             string choice;
             int ParsedChoice;
             while (true)
             {
-                Console.WriteLine("Choose a Sharpmon :");
+                Console.WriteLine("Choose a Sharpmon:");
                 for (int i = 0; i < player.GetSharpmonses().Count; i++)
                     Console.WriteLine($"\t\t{i}: {player.GetSharpmonses()[i].Name} (Hp: {player.GetSharpmonses()[i].CurrentHp}/{player.GetSharpmonses()[i].MaxHp})");
                 Console.WriteLine($"\n\t{player.GetSharpmonses().Count}: Continue the fight with current the Sharpmon\n\t{player.GetSharpmonses().Count + 1}: Leave the fight");
@@ -578,7 +574,7 @@ namespace Sharpmon
                         Sharpmon TemporarySharpmon = player.GetCurrentSharpmon();
                         player.GetSharpmonses()[0] = player.GetSharpmonses()[ParsedChoice];
                         player.GetSharpmonses()[ParsedChoice] = TemporarySharpmon;
-                        Console.WriteLine($"I choose you {player.GetCurrentSharpmon().Name} !");
+                        Console.WriteLine($"I choose you {player.GetCurrentSharpmon().Name}!");
                         Loading(350, 3);
                         FightScene(ennemy);
                         return;
@@ -640,7 +636,7 @@ namespace Sharpmon
                     choice = Console.ReadLine();
                     if (Item.ContainItem(choice, player.GetItems()))
                     {
-                        Console.WriteLine("On which Sharpmon do you want to use it ?");
+                        Console.WriteLine("On which Sharpmon do you want to use it?");
                         foreach (Sharpmon sharpmon in player.GetSharpmonses())
                         {
                             Console.WriteLine($"\t{hiddenCount}: {sharpmon.Name} (Level {sharpmon.GetLevel()}): {sharpmon.CurrentHp} /{sharpmon.MaxHp}");
@@ -661,7 +657,6 @@ namespace Sharpmon
                                     ennemy.GetAttack(Rng.Next(2)).LaunchAttack(ennemy, player.GetCurrentSharpmon());
                                     if (!player.GetCurrentSharpmon().IsAlive())
                                     {
-                                        Console.WriteLine("You current Sharpmon fainted !");
                                         ChangeSystem(ennemy);
                                         return;
                                     }
@@ -704,7 +699,7 @@ namespace Sharpmon
             {
                 Loading(200, 8);
                 player.AddSharpmon(ennemy);
-                Console.WriteLine($"\nYou captured a {ennemy.Name} !");
+                Console.WriteLine($"\nYou captured a {ennemy.Name}!");
                 Console.Write($"Heading back to town.");
                 for (int i = 0; i < 10; i++)
                 {
@@ -716,11 +711,11 @@ namespace Sharpmon
             else
             {
                 Loading(200, Functions.Choose(2, 4, 6));
-                Console.WriteLine($"\n{ennemy.Name} broke free !");
+                Console.WriteLine($"\n{ennemy.Name} broke free!");
                 ennemy.GetAttack(Rng.Next(2)).LaunchAttack(ennemy, CurrentSharpmon);
                 if (!CurrentSharpmon.IsAlive())
                 {
-                    Console.WriteLine("You current Sharpmon fainted !");
+                    Console.WriteLine("You current Sharpmon fainted!");
                     ChangeSystem(ennemy);
                     return;
                 }
@@ -794,7 +789,7 @@ namespace Sharpmon
         {
             Console.Clear();
             Console.WriteLine($"\tYou currently have {player.SharpDollars} sharpdollars.\n" +
-                              "\tWhich item do you want ? (Press enter if you want to leave)");
+                              "\tWhich item do you want? (Press enter if you want to leave)");
             for (int i = 0; i < Sharpdex.AllItems.Count; i++)
                 Console.WriteLine($"\t{i}: {Sharpdex.AllItems[i].GetName()} \tPrice: {Sharpdex.AllItems[i].GetPrice()}");
 
@@ -808,7 +803,7 @@ namespace Sharpmon
                     {
                         if (Choice == $"{Sharpdex.AllItems[i].GetName().ToLower()}" || Choice == $"{i}")
                         {
-                            Console.WriteLine($"How much {Sharpdex.AllItems[i].GetName()} do you want ?");
+                            Console.WriteLine($"How much {Sharpdex.AllItems[i].GetName()} do you want?");
                             Choice = Console.ReadLine().ToLower();
                             if ((int.TryParse(Choice, out ParsedChoise) && ParsedChoise > 0) && player.SharpDollars - Sharpdex.AllItems[i].GetPrice()* ParsedChoise >= 0)
                             {
@@ -867,7 +862,7 @@ namespace Sharpmon
                     if (Item.ContainItem(Choice, player.GetItems()))
                     {
                         Item item = Item.GetItem(Choice, player.GetItems());
-                        Console.WriteLine($"How much {item.GetName()} do you want to sell ?");
+                        Console.WriteLine($"How much {item.GetName()} do you want to sell?");
                         while (true)
                         {
                             Choice = Console.ReadLine();
@@ -876,7 +871,7 @@ namespace Sharpmon
                                 for(int i = 0; i < ParsedChoise; i++)
                                     player.GetItems().RemoveAt(player.GetItems().IndexOf(Item.GetItem(item.GetName(), player.GetItems())));
                                 player.SharpDollars += item.GetSellPrice()* ParsedChoise;
-                                Console.Write($"You gained {item.GetSellPrice() * ParsedChoise} sharpdollars !\nFinishing transaction");
+                                Console.Write($"You gained {item.GetSellPrice() * ParsedChoise} sharpdollars!\nFinishing transaction");
                                 Loading(150, 10);
                                 CheckEmptyInventory();
                                 return;
@@ -908,7 +903,7 @@ namespace Sharpmon
         }
 
         /// <summary>
-        /// Method used to Serialize (or save) the player's stats and objects into a binary file.
+        /// Method used to Serialize (or save) the player's stats and objects into a json file.
         /// </summary>
         /// <param name="fileName"></param>
         public static void SerializeItem(string fileName)
@@ -921,7 +916,7 @@ namespace Sharpmon
         }
         
         /// <summary>
-        /// Method used to charge the data of the player from the binary file.
+        /// Method used to charge the data of the player from the json file.
         /// </summary>
         /// <param name="fileName"></param>
         public static void DeserializeItem(string fileName)

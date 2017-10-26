@@ -82,6 +82,7 @@ namespace Sharpmon
             new Attack("Sand-Attack", Attack.ElementalType.GROUND, Effect.Target.ENEMY, 0, 0, 0, 0, 1),
             new Attack("Tail Whip", Effect.Target.ENEMY, 0, 0, 1),
             new Attack("Water Sport", Attack.ElementalType.WATER, Effect.Target.ENEMY, 0, 1)};
+        
         public static List<Item> AllItems = new List<Item>{             //The list that will contain every existing item of the game.
             new Item("Potion", 100, "Adds 10HP to a Sharpmon", 10),
             new Item("Sup Potion", 300, "Adds 50HP to a Sharpmon", 50),
@@ -93,6 +94,7 @@ namespace Sharpmon
             new Item("Calcium", 1500, "The Sharpmon base dodge increases by 1", 0, 0, 0, 1),
             new Item("Zinc", 1500, "The Sharpmon base accucary increases by 1", 0, 0, 0, 0, 1),
             new Item("Carbos", 2000, "The Sharpmon base speed increases by 1", 0, 0, 0, 0, 0, 1)};
+        
         public static List<Sharpmon> AllSharpmons = new List<Sharpmon>{ //The list that will contain every existing sharpmon of the game.
             //STARTERS
             new Sharpmon("Sharpmender", Sharpmon.ElementalType.FIRE, 10, 10, 1, 1, 1, 2, 1, Attack.GetAttack("Ember"), Attack.GetAttack("Grawl")),
@@ -149,6 +151,7 @@ namespace Sharpmon
             new Sharpmon("Sharpticuno", Sharpmon.ElementalType.WATER, 30, 30, 4, 6, 6, 4, 4, Attack.GetAttack("Ice Beam"), Attack.GetAttack("Hydro Cannon")),
             new Sharpmon("Sharpew", Sharpmon.ElementalType.PSYCHIC, 35, 35, 6, 6, 6, 7, 6, Attack.GetAttack("Future Sight"), Attack.GetAttack("Cosmic Defense")),
             new Sharpmon("Sharpewtwo", Sharpmon.ElementalType.PSYCHIC, 35, 35, 7, 6, 6, 6, 6, Attack.GetAttack("Future Sight"), Attack.GetAttack("Cosmic Power"))};
+        
         public static List<string> Badges = new List<string>{           //The list that will contain every existing badges of the game.
             "Boulder",
             "Cascade",
@@ -159,6 +162,7 @@ namespace Sharpmon
             "Volcano",
             "Earth",
             "The Elite Four"};
+        
         public static List<string> Towns = new List<string>{            //The list that will contain every existing towns of the game.
             "Pewter City",
             "Cerulean City",
