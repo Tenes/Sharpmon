@@ -21,6 +21,7 @@ namespace Sharpmon
             new Attack("Pound", Effect.Target.ENEMY, 20),
             new Attack("False Swipe", Effect.Target.ENEMY, 50),
             new Attack("Tri Attack", Effect.Target.ENEMY, 80),
+            new Attack("Hyper Beam", Effect.Target.ENEMY, 150),
 
             new Attack("Poison Sting", Attack.ElementalType.POISON, Effect.Target.ENEMY, 30),
 
@@ -28,10 +29,12 @@ namespace Sharpmon
             new Attack("Wing Attack", Attack.ElementalType.FLYING, Effect.Target.ENEMY, 50),
             new Attack("Drill Peck", Attack.ElementalType.FLYING, Effect.Target.ENEMY, 60),
             new Attack("Aeroblast", Attack.ElementalType.FLYING, Effect.Target.ENEMY, 100),
+            new Attack("Hurricane", Attack.ElementalType.FLYING, Effect.Target.ENEMY, 120),
             new Attack("Sky Attack", Attack.ElementalType.FLYING, Effect.Target.ENEMY, 150),
 
             new Attack("Thundershock", Attack.ElementalType.ELECTRIC, Effect.Target.ENEMY, 40),
             new Attack("Thunder Punch", Attack.ElementalType.ELECTRIC, Effect.Target.ENEMY, 70),
+            new Attack("Thunder Fang", Attack.ElementalType.ELECTRIC, Effect.Target.ENEMY, 75),
             new Attack("Thunder", Attack.ElementalType.ELECTRIC, Effect.Target.ENEMY, 120),
 
             new Attack("Ember", Attack.ElementalType.FIRE, Effect.Target.ENEMY, 40),
@@ -41,19 +44,23 @@ namespace Sharpmon
 
             new Attack("Vine Whip", Attack.ElementalType.GRASS, Effect.Target.ENEMY, 40),
             new Attack("Razor Leaf", Attack.ElementalType.GRASS, Effect.Target.ENEMY, 60),
-            new Attack("Solar Beam", Attack.ElementalType.GRASS, Effect.Target.ENEMY, 120),
+            new Attack("Petal Dance", Attack.ElementalType.GRASS, Effect.Target.ENEMY, 110),
+            new Attack("Solar Beam", Attack.ElementalType.GRASS, Effect.Target.ENEMY, 130),
 
             new Attack("Water Gun", Attack.ElementalType.WATER, Effect.Target.ENEMY, 40),
             new Attack("Dive", Attack.ElementalType.WATER, Effect.Target.ENEMY, 80),
             new Attack("Hydro Cannon", Attack.ElementalType.WATER, Effect.Target.ENEMY, 150),
 
             new Attack("Bonemerang", Attack.ElementalType.GROUND, Effect.Target.ENEMY, 50),
+            new Attack("Rock Tomb", Attack.ElementalType.GROUND, Effect.Target.ENEMY, 60, 0, 0, 0, 0, 2),
             new Attack("Bone Club", Attack.ElementalType.GROUND, Effect.Target.ENEMY, 70),
             new Attack("Earthquake", Attack.ElementalType.GROUND, Effect.Target.ENEMY, 100),
 
             new Attack("Twineedle", Attack.ElementalType.BUG, Effect.Target.ENEMY, 30),
             new Attack("Fury Cutter", Attack.ElementalType.BUG, Effect.Target.ENEMY, 60),
-            new Attack("X-Scissor", Attack.ElementalType.BUG, Effect.Target.ENEMY, 90),
+            new Attack("Sludge", Attack.ElementalType.BUG, Effect.Target.ENEMY, 70, 0, 0, 2, 2),
+            new Attack("X-Scissor", Attack.ElementalType.BUG, Effect.Target.ENEMY, 100),
+            new Attack("Mega Horn", Attack.ElementalType.BUG, Effect.Target.ENEMY, 120),
 
             new Attack("Rock Smash", Attack.ElementalType.FIGHTING, Effect.Target.ENEMY, 40),
             new Attack("Karate Chop", Attack.ElementalType.FIGHTING, Effect.Target.ENEMY, 50),
@@ -62,6 +69,8 @@ namespace Sharpmon
 
             new Attack("Ice Beam", Attack.ElementalType.ICE, Effect.Target.ENEMY, 100),
 
+            new Attack("Disable", Attack.ElementalType.PSYCHIC, Effect.Target.ENEMY, 30, 5, 5, 5, 5, 5),
+            new Attack("Psychic", Attack.ElementalType.PSYCHIC, Effect.Target.ENEMY, 90, 0, 2),
             new Attack("Future Sight", Attack.ElementalType.PSYCHIC, Effect.Target.ENEMY, 110),
 
             //BUFF-DEBUFF ATTACKS
@@ -80,8 +89,8 @@ namespace Sharpmon
 
             new Attack("String Shot", Attack.ElementalType.BUG, Effect.Target.ENEMY, 0, 0, 0, 0, 0, 1),
             new Attack("Sand-Attack", Attack.ElementalType.GROUND, Effect.Target.ENEMY, 0, 0, 0, 0, 1),
-            new Attack("Tail Whip", Effect.Target.ENEMY, 0, 0, 1),
-            new Attack("Water Sport", Attack.ElementalType.WATER, Effect.Target.ENEMY, 0, 1)};
+            new Attack("Tail Whip", Effect.Target.ENEMY, 0, 0, 3),
+            new Attack("Water Sport", Attack.ElementalType.WATER, Effect.Target.ENEMY, 0, 3)};
         
         public static List<Item> AllItems = new List<Item>{             //The list that will contain every existing item of the game.
             new Item("Potion", 100, "Adds 10HP to a Sharpmon", 10),
@@ -97,7 +106,7 @@ namespace Sharpmon
         
         public static List<Sharpmon> AllSharpmons = new List<Sharpmon>{ //The list that will contain every existing sharpmon of the game.
             //STARTERS
-            new Sharpmon("Sharpmender", Sharpmon.ElementalType.FIRE, 10, 10, 1, 1, 1, 2, 1, Attack.GetAttack("Ember"), Attack.GetAttack("Grawl")),
+            new Sharpmon("Sharpmender", Sharpmon.ElementalType.FIRE, 10, 10, 2, 2, 1, 2, 1, Attack.GetAttack("Ember"), Attack.GetAttack("Grawl")),
             new Sharpmon("Sharpasaur", Sharpmon.ElementalType.GRASS, 9, 9, 1, 1, 3, 2, 2, Attack.GetAttack("Vine Whip"), Attack.GetAttack("Foliage")),
             new Sharpmon("Sharpitle", Sharpmon.ElementalType.WATER, 11, 11, 1, 2, 2, 1, 2, Attack.GetAttack("Water Gun"), Attack.GetAttack("Shell")),
             new Sharpmon("Sharpichu", Sharpmon.ElementalType.ELECTRIC, 11, 11, 1, 1, 2, 2, 2, Attack.GetAttack("Thundershock"), Attack.GetAttack("Tail Whip")),
@@ -119,7 +128,6 @@ namespace Sharpmon
             new Sharpmon("Sharplett", Sharpmon.ElementalType.GROUND, 11, 11, 2, 2, 1, 1, 1, Attack.GetAttack("Scratch"), Attack.GetAttack("Sand-Attack")),
             new Sharpmon("Sharpodude", Sharpmon.ElementalType.GROUND, 12, 12, 1, 2, 1, 3, 1, Attack.GetAttack("Rock Smash"), Attack.GetAttack("Shell")),
             new Sharpmon("Sharpix", Sharpmon.ElementalType.FIRE, 8, 8, 3, 2, 2, 3, 3, Attack.GetAttack("Ember"), Attack.GetAttack("Tail Whip")),
-            new Sharpmon("Sharponix", Sharpmon.ElementalType.GROUND, 13, 13, 2, 2, 1, 1, 1, Attack.GetAttack("Pound"), Attack.GetAttack("Shell")),
             new Sharpmon("Sharpowlithe", Sharpmon.ElementalType.FIRE, 9, 9, 2, 1, 2, 2, 1, Attack.GetAttack("Scratch"), Attack.GetAttack("Ember")),
             new Sharpmon("Sharponyta", Sharpmon.ElementalType.FIRE, 11, 11, 2, 1, 2, 2, 1, Attack.GetAttack("Ember"), Attack.GetAttack("Haste")),
             new Sharpmon("Sharpbby", Sharpmon.ElementalType.WATER, 11, 11, 2, 3, 1, 2, 1, Attack.GetAttack("Scratch"), Attack.GetAttack("Shell")),
@@ -134,20 +142,29 @@ namespace Sharpmon
             new Sharpmon("Sharpaskhan", Sharpmon.ElementalType.NORMAL, 14, 14, 3, 1, 3, 2, 2, Attack.GetAttack("Tri Attack"), Attack.GetAttack("Rock Smash")),
             new Sharpmon("Sharptong", Sharpmon.ElementalType.NORMAL, 15, 15, 2, 2, 2, 5, 2, Attack.GetAttack("Tri Attack"), Attack.GetAttack("Tail Whip")),
             new Sharpmon("Sharpbone", Sharpmon.ElementalType.GROUND, 10, 10, 2, 2, 2, 3, 2, Attack.GetAttack("Bonemerang"), Attack.GetAttack("Grawl")),
+            new Sharpmon("Sharponix", Sharpmon.ElementalType.GROUND, 13, 13, 2, 4, 1, 1, 2, Attack.GetAttack("Rock Tomb"), Attack.GetAttack("Harden")),
+            new Sharpmon("Sharprydhon", Sharpmon.ElementalType.GROUND, 18, 18, 5, 5, 2, 2, 2, Attack.GetAttack("Mega Horn"), Attack.GetAttack("Earthquake")),
             new Sharpmon("Sharpcyther", Sharpmon.ElementalType.BUG, 13, 13, 3, 2, 2, 2, 2, Attack.GetAttack("Fury Cutter"), Attack.GetAttack("Foliage")),
             new Sharpmon("Sharpinsir", Sharpmon.ElementalType.BUG, 14, 14, 2, 3, 2, 2, 1, Attack.GetAttack("Fury Cutter"), Attack.GetAttack("Shell")),
+            new Sharpmon("Sharpzing", Sharpmon.ElementalType.BUG, 16, 16, 2, 3, 3, 2, 3, Attack.GetAttack("Sludge"), Attack.GetAttack("Pound")),
+            new Sharpmon("Sharplume", Sharpmon.ElementalType.GRASS, 15, 15, 4, 2, 2, 1, 2, Attack.GetAttack("Petal Dance"), Attack.GetAttack("Foliage")),
             new Sharpmon("Sharpmonchan", Sharpmon.ElementalType.FIGHTING, 13, 13, 2, 2, 3, 3, 2, Attack.GetAttack("Jump Kick"), Attack.GetAttack("Grawl")),
             new Sharpmon("Sharpmonlee", Sharpmon.ElementalType.FIGHTING, 13, 13, 4, 1, 2, 4, 3, Attack.GetAttack("Focus Punch"), Attack.GetAttack("Foliage")),
             new Sharpmon("Sharpcanine", Sharpmon.ElementalType.FIRE, 15, 15, 4, 1, 2, 3, 4, Attack.GetAttack("Flamethrower"), Attack.GetAttack("Grawl")),
             new Sharpmon("Sharplareon", Sharpmon.ElementalType.FIRE, 15, 15, 4, 3, 3, 3, 2, Attack.GetAttack("Fire Blast"), Attack.GetAttack("Fire Dance")),
+            new Sharpmon("Sharponite", Sharpmon.ElementalType.FLYING, 20, 20, 5, 3, 4, 3, 4, Attack.GetAttack("Hurricane"), Attack.GetAttack("Hyper Beam")),
             new Sharpmon("Sharpras", Sharpmon.ElementalType.WATER, 20, 20, 3, 5, 2, 2, 2, Attack.GetAttack("Ice Beam"), Attack.GetAttack("Water Gun")),
+            new Sharpmon("Sharpmie", Sharpmon.ElementalType.WATER, 16, 16, 4, 5, 1, 1, 1, Attack.GetAttack("Ice Beam"), Attack.GetAttack("Shell")),
             new Sharpmon("Sharparados", Sharpmon.ElementalType.WATER, 17, 17, 5, 4, 2, 4, 1, Attack.GetAttack("Dive"), Attack.GetAttack("Shell")),
             new Sharpmon("Sharporeon", Sharpmon.ElementalType.WATER, 15, 15, 4, 3, 3, 3, 2, Attack.GetAttack("Hydro Cannon"), Attack.GetAttack("Water Dance")),
             new Sharpmon("Sharpolteon", Sharpmon.ElementalType.ELECTRIC, 15, 15, 4, 3, 3, 3, 2, Attack.GetAttack("Thunder"), Attack.GetAttack("Electric Dance")),
+            new Sharpmon("Sharpraichu", Sharpmon.ElementalType.ELECTRIC, 13, 13, 3, 3, 3, 3, 4, Attack.GetAttack("Thunder Punch"), Attack.GetAttack("Electric Dance")),
+            new Sharpmon("Sharplakazam", Sharpmon.ElementalType.PSYCHIC, 14, 14, 5, 2, 2, 5, 4, Attack.GetAttack("Psychic"), Attack.GetAttack("Disable")),
 
             //LEGENDARY SHARPMON
             new Sharpmon("Sharpdos", Sharpmon.ElementalType.ELECTRIC, 30, 30, 4, 4, 4, 6, 6, Attack.GetAttack("Thunder"), Attack.GetAttack("Aeroblast")),
             new Sharpmon("Sharpoltres", Sharpmon.ElementalType.FIRE, 30, 30, 6, 4, 6, 4, 4, Attack.GetAttack("Fire Blast"), Attack.GetAttack("Sky Attack")),
+            new Sharpmon("Sharpcanine", Sharpmon.ElementalType.FIRE, 20, 20, 6, 3, 4, 5, 6, new Attack("Flare Blitz", Attack.ElementalType.FIRE, Effect.Target.ENEMY, 120), Attack.GetAttack("Thunder Fang")),
             new Sharpmon("Sharpticuno", Sharpmon.ElementalType.WATER, 30, 30, 4, 6, 6, 4, 4, Attack.GetAttack("Ice Beam"), Attack.GetAttack("Hydro Cannon")),
             new Sharpmon("Sharpew", Sharpmon.ElementalType.PSYCHIC, 35, 35, 6, 6, 6, 7, 6, Attack.GetAttack("Future Sight"), Attack.GetAttack("Cosmic Defense")),
             new Sharpmon("Sharpewtwo", Sharpmon.ElementalType.PSYCHIC, 35, 35, 7, 6, 6, 6, 6, Attack.GetAttack("Future Sight"), Attack.GetAttack("Cosmic Power"))};
@@ -172,7 +189,19 @@ namespace Sharpmon
             "Fuschia City",
             "Cinnabar Island",
             "Viridian City",
-            "the Indigo Plateau"};
+            "the Indigo Plateau"
+        };
+        public static Dictionary<Sharpmon, int> ArenaSharpmons = new Dictionary<Sharpmon, int>{            //The list that will contain each pair of sharpmon/level per arena.
+            {Sharpmon.CopySharpmon(Sharpmon.GetSharpmon("Sharponix", Sharpdex.AllSharpmons)), 14},
+            {Sharpmon.CopySharpmon(Sharpmon.GetSharpmon("Sharpmie", Sharpdex.AllSharpmons)), 21},
+            {Sharpmon.CopySharpmon(Sharpmon.GetSharpmon("Sharpraichu", Sharpdex.AllSharpmons)), 24},
+            {Sharpmon.CopySharpmon(Sharpmon.GetSharpmon("Sharplume", Sharpdex.AllSharpmons)), 29},
+            {Sharpmon.CopySharpmon(Sharpmon.GetSharpmon("Sharpzing", Sharpdex.AllSharpmons)), 43},
+            {Sharpmon.CopySharpmon(Sharpmon.GetSharpmon("Sharplakazam", Sharpdex.AllSharpmons)), 43},
+            {Sharpmon.CopySharpmon(Sharpmon.GetSharpmon("Sharpcanine", Sharpdex.AllSharpmons)), 47},
+            {Sharpmon.CopySharpmon(Sharpmon.GetSharpmon("Sharprydhon", Sharpdex.AllSharpmons)), 50},
+            {Sharpmon.CopySharpmon(Sharpmon.GetSharpmon("Sharponite", Sharpdex.AllSharpmons)), 62}
+        };
         
     }
 }

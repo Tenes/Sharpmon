@@ -203,7 +203,7 @@ namespace Sharpmon
                   tremendously high, so high that it breaks the limit of the int storage meaning
                   that the stats become negative since if a int or anything else is overloadded,
                   the overload makes the number start from the min number possible with the int.*/
-                if (this.Level == 40)
+                if (this.Level == 100)
                     return;
                 if (this.CurrentExperience >= this.MaxExperience)
                 {
@@ -235,10 +235,10 @@ namespace Sharpmon
             this.Level += 1;
             this.MaxExperience = (int)(4 * Math.Pow(this.Level, 3) / 5);
 
-            this.MaxHp = LevelUpSystem(((this.MaxHp * 2) * this.Level/ 100) + 10 + this.Level);
-            this.CurrentHp = this.MaxHp;
-
             Sharpmon baseSharpmon = GetSharpmon(this.Name, Sharpdex.AllSharpmons);
+
+            this.MaxHp = LevelUpSystem((((baseSharpmon.MaxHp * 2) * this.Level)/ 100) + 10 + this.Level);
+            this.CurrentHp = this.MaxHp;
 
             this.BasePower = LevelUpSystem(baseSharpmon.BasePower * (this.Level / 2) + baseSharpmon.BasePower);
             this.CurrentPower = this.BasePower;
@@ -286,17 +286,17 @@ namespace Sharpmon
         /// <returns></returns>
         public int LevelUpSystem(double tempStat)
         {
-            int tempRng;
-            if (tempStat != Math.Floor(tempStat))
+            int finalStat = (GameInstance.Rng.Next(1,3) == 1) ? (int)Math.Floor(tempStat) : (int)Math.Ceiling(tempStat);;
+            switch(GameInstance.Rng.Next(1,4))
             {
-                tempRng = GameInstance.Rng.Next(1, 3);
-                if (tempRng == 1)
-                    return (int)Math.Floor(tempStat);
-                else
-                    return (int)Math.Ceiling(tempStat);
+                case 1:
+                    return --finalStat;
+                case 2:
+                    return finalStat;
+                case 3:
+                default:
+                    return ++finalStat;
             }
-            else
-                return (int)tempStat;
         }
 
         /// <summary>
@@ -345,6 +345,13 @@ namespace Sharpmon
         public static bool ContainSharpmon(string Name, List<Sharpmon> sharpmons)
         {
             return sharpmons.Contains(GetSharpmon(Name, sharpmons));
+        }
+
+        public new void ToString()
+        {
+            this.GetColorElementalType();
+            Console.Write($" {this.Name} ");
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
     }
 }

@@ -147,7 +147,7 @@ namespace Sharpmon
                             {
                                 /*Define the value of the Final Damage variable based on the many factors 
                                   (this formula is close to the real one used in pokemon).*/
-                                this.FinalDamage = AttackCalculation(((2*launcher.GetLevel()/5)*launcher.CurrentPower * this.Damage / receiver.CurrentDefense)/50 + 2);
+                                this.FinalDamage = AttackCalculation(((2*launcher.GetLevel()/5)*launcher.CurrentPower * (this.Damage / receiver.CurrentDefense))/50 + 2);
                                 /*Second check to see if the ennemy's type is resistant to this attack's type.
                                   If so, the final damage of this attack is divised by 2 (same as in the pokemon games)*/
                                 if (IsTargetResitant(receiver))
@@ -184,45 +184,39 @@ namespace Sharpmon
                                 Console.WriteLine($"{launcher.Name} missed his {this.Name} !");
                         }
                     }
-                    /*If the attack's damage stat is equal to zero then act as a debuff type of attack.
-                      It acts as the exact opposite of the buff since it lowers the receiver's stats
-                      by the attack's stats.*/
-                    else if(this.Damage == 0)
-                    {
-                        /*If the receiver's stats minus the attack's stats results are lower than 1
-                          then the debuff has no effect.*/
-                        if (receiver.CurrentPower - this.Power < 1 || receiver.CurrentDefense - this.Defense < 1 ||
-                            receiver.CurrentDodge - this.Dodge < 1 || receiver.CurrentAccucary - this.Accucary < 1 ||
-                            receiver.CurrentSpeed - this.Speed < 1)
-                            Console.WriteLine($"{this.Name} is inefective against {receiver.Name}!");
+                    /*If the receiver's stats minus the attack's stats results are lower than 1
+                        then the debuff has no effect.*/
+                    if (receiver.CurrentPower - this.Power < 1 || receiver.CurrentDefense - this.Defense < 1 ||
+                        receiver.CurrentDodge - this.Dodge < 1 || receiver.CurrentAccucary - this.Accucary < 1 ||
+                        receiver.CurrentSpeed - this.Speed < 1)
+                        Console.WriteLine($"{this.Name} is inefective against {receiver.Name}!");
 
-                        /*Such as for the buff, the actual losses of stats are displayed to the player
-                          for a better use experience.*/
-                        if (receiver.CurrentPower > 1 && this.Power > 0)
-                        {
-                            receiver.CurrentPower -= this.Power;
-                            Console.WriteLine($"{receiver.Name} lost {this.Power} Power!");
-                        }
-                        if (receiver.CurrentDefense > 1 && this.Defense > 0)
-                        {
-                            receiver.CurrentDefense -= this.Defense;
-                            Console.WriteLine($"{receiver.Name} lost {this.Defense} Defense!");
-                        }
-                        if (receiver.CurrentDodge > 1 && this.Dodge > 0)
-                        {
-                            receiver.CurrentDodge -= this.Dodge;
-                            Console.WriteLine($"{receiver.Name} lost {this.Dodge} Dodge!");
-                        }
-                        if (receiver.CurrentAccucary > 1 && this.Accucary > 0)
-                        {
-                            receiver.CurrentAccucary -= this.Accucary;
-                            Console.WriteLine($"{receiver.Name} lost {this.Accucary} Accucary!");
-                        }
-                        if (receiver.CurrentSpeed > 1 && this.Speed > 0)
-                        {
-                            receiver.CurrentSpeed -= this.Speed;
-                            Console.WriteLine($"{receiver.Name} lost {this.Speed} Speed!");
-                        }
+                    /*Such as for the buff, the actual losses of stats are displayed to the player
+                        for a better use experience.*/
+                    if (receiver.CurrentPower > 1 && this.Power > 0)
+                    {
+                        receiver.CurrentPower -= this.Power;
+                        Console.WriteLine($"{receiver.Name} lost {this.Power} Power!");
+                    }
+                    if (receiver.CurrentDefense > 1 && this.Defense > 0)
+                    {
+                        receiver.CurrentDefense -= this.Defense;
+                        Console.WriteLine($"{receiver.Name} lost {this.Defense} Defense!");
+                    }
+                    if (receiver.CurrentDodge > 1 && this.Dodge > 0)
+                    {
+                        receiver.CurrentDodge -= this.Dodge;
+                        Console.WriteLine($"{receiver.Name} lost {this.Dodge} Dodge!");
+                    }
+                    if (receiver.CurrentAccucary > 1 && this.Accucary > 0)
+                    {
+                        receiver.CurrentAccucary -= this.Accucary;
+                        Console.WriteLine($"{receiver.Name} lost {this.Accucary} Accucary!");
+                    }
+                    if (receiver.CurrentSpeed > 1 && this.Speed > 0)
+                    {
+                        receiver.CurrentSpeed -= this.Speed;
+                        Console.WriteLine($"{receiver.Name} lost {this.Speed} Speed!");
                     }
                     break;
             }

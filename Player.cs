@@ -16,6 +16,8 @@ namespace Sharpmon
         [JsonProperty]
         private List<Sharpmon> SharpmonsList;       //The list that stocks all the player's sharpmons.
         [JsonProperty]
+        private List<Sharpmon> PCList;       //The list that stocks all the player's sharpmons in the pc.
+        [JsonProperty]
         private List<Item> ItemsList;               //The list that stocks all the player's items.
         [JsonProperty]
         public string currentTown { get; set; }
@@ -25,11 +27,28 @@ namespace Sharpmon
         /// Getter to return the entire list of sharpmons.
         /// </summary>
         /// <returns></returns>
-        public List<Sharpmon> GetSharpmonses()
+        public List<Sharpmon> GetSharpmons()
         {
             return this.SharpmonsList;
         }
         
+        /// <summary>
+        /// Getter to return the entire list of sharpmons in the PC.
+        /// </summary>
+        /// <returns></returns>
+        public List<Sharpmon> GetSharpmonsInPC()
+        {
+            return this.PCList;
+        }
+
+        /// <summary>
+        /// Getter to return the entire list of sharpmons.
+        /// </summary>
+        /// <returns></returns>
+        public void AddSharpmonInPC(Sharpmon sharpmon)
+        {
+            this.PCList.Add(sharpmon);
+        }
         /// <summary>
         /// Getter to return the entier list of items.
         /// </summary>
@@ -54,6 +73,7 @@ namespace Sharpmon
             this.Name = name;
             this.SharpDollars = 20000;
             this.SharpmonsList = new List<Sharpmon>();
+            this.PCList = new List<Sharpmon>();
             this.ItemsList = new List<Item>();
             this.currentTown = Sharpdex.Towns[0];
             GetFirstSharpmon();
@@ -65,11 +85,12 @@ namespace Sharpmon
         /// <param name="info"></param>
         /// <param name="context"></param>
         [JsonConstructor]
-        public Player(string name, int sharpDollars, List<Sharpmon> sharpmonsList, List<Item> itemsList, string currentTown)
+        public Player(string name, int sharpDollars, List<Sharpmon> sharpmonsList, List<Sharpmon> pcList, List<Item> itemsList, string currentTown)
         {
             this.Name = name;
             this.SharpDollars = sharpDollars;
             this.SharpmonsList = sharpmonsList;
+            this.PCList = pcList;
             this.ItemsList = itemsList;
             this.currentTown = currentTown;
         }
