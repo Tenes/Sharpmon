@@ -463,35 +463,39 @@ namespace Sharpmon
 
 
                 Choice = Console.ReadLine();
-                if (int.TryParse(Choice, out parsedChoice) && parsedChoice >= 0 && parsedChoice < player.GetSharpmonsInPC().Count%(page*8))
+                if(int.TryParse(Choice, out parsedChoice))
                 {
-                    if(player.GetSharpmons().Count < 6)
+                    if (parsedChoice >= 0 && parsedChoice < player.GetSharpmonsInPC().Count%8)
                     {
-                        Console.Write("Placing");
-                        player.GetSharpmonsInPC()[(page-1)*8+parsedChoice].ToString();
-                        Console.WriteLine("in your inventory.");
-                        player.GetSharpmons().Add((player.GetSharpmonsInPC()[(page-1)*8+parsedChoice]));
-                        player.GetSharpmonsInPC().RemoveAt((page-1)*8+parsedChoice); 
-                        Loading(200, 5);
-                        return;
+                        if(player.GetSharpmons().Count < 6)
+                        {
+                            Console.Write("Placing");
+                            player.GetSharpmonsInPC()[(page-1)*8+parsedChoice].ToString();
+                            Console.WriteLine("in your inventory.");
+                            player.GetSharpmons().Add((player.GetSharpmonsInPC()[(page-1)*8+parsedChoice]));
+                            player.GetSharpmonsInPC().RemoveAt((page-1)*8+parsedChoice); 
+                            Loading(200, 5);
+                            return;
+                        }
+                        else
+                        {
+                            Console.WriteLine("You already have the maximum number of sharpmons in your inventory.\nReturning to the PC's menu.");
+                            Loading(300, 9);
+                            return;
+                        }
                     }
-                    else
+                    else if(parsedChoice == 8 && page < pageMax)
                     {
-                        Console.WriteLine("You already have the maximum number of sharpmons in your inventory.\nReturning to the PC's menu.");
-                        Loading(300, 9);
-                        return;
+                        page++;
+                        continue;
+                    }
+                    else if(parsedChoice == 9 && page > 1)
+                    {
+                        page--;
+                        continue;
                     }
                 }
-                else if(int.TryParse(Choice, out parsedChoice) && parsedChoice == 8)
-                {
-                    page++;
-                    continue;
-                }
-                else if(int.TryParse(Choice, out parsedChoice) && parsedChoice == 9)
-                {
-                    page--;
-                    continue;
-                }
+                
                 else if(Choice == "")
                 {
                     return;
