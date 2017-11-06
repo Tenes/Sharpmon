@@ -23,5 +23,6 @@ namespace Sharpmon
             int[] selectionArray = new int[] { x1, x2, x3, x4 };
             return selectionArray[GameInstance.Rng.Next(0, 4)];
         }
+        
     }
 }

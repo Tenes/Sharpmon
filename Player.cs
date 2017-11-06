@@ -111,61 +111,49 @@ namespace Sharpmon
         /// </summary>
         private void GetFirstSharpmon()
         {
+            /*All of the code below has the purpose to offer the player a better
+                user experience. When the user press 1 or 2, another starter is displayed
+                to the player and so on. If he presses 0, he select the current sharpmon
+                displaying.*/
             Console.Clear();
             Console.WriteLine($"Alright {this.Name}, allow me to introduce myself.\nI'm the professor Shoap, an expert of the Sharpworld.\n" +
                               "Before exploring this vast and glorious world, choose a Sharpmon among those:\n");
-            string choice;
-            int hiddenCount = 0;        //Hidden counter used for the various check present in this method.
+            ConsoleKeyInfo choice;
+            int hiddenScroll = 0;        //Hidden counter used for the various check present in this method.
+            string dynamicText;
+            Selector hiddenSelector = new Selector();
+            this.DrawStarters(hiddenScroll);
+            dynamicText = "\t\t\tChoose this Sharpmon";
+            hiddenSelector.SetText(dynamicText);
             while (true)
             {
-                /*All of the below code has the purpose to offer the player a better
-                  user experience. When the user press 1 or 2, another starter is displayed
-                  to the player and so on. If he presses 0, he select the current sharpmon
-                  displaying.*/
-                Sharpdex.AllSharpmons[hiddenCount].GetColorElementalType();
-                Console.WriteLine($"\t\t _______________________________________\n" +
-                              $"\t\t|\t\t\t\t\t|\n" +
-                              $"\t\t|\t {Sharpdex.AllSharpmons[hiddenCount].Name}\tHp: {Sharpdex.AllSharpmons[hiddenCount].MaxHp} \t\t|\n" +
-                              $"\t\t|\t Attacks:\t{Sharpdex.AllSharpmons[hiddenCount].GetAttack(0).GetName()}   \t|\n" +
-                              $"\t\t|\t\t\t{Sharpdex.AllSharpmons[hiddenCount].GetAttack(1).GetName()}    \t|\n" +
-                              $"\t\t|_______________________________________|\n");
-                Console.ForegroundColor = ConsoleColor.Gray;
-
-                Console.WriteLine("\t\t\t0: Choose this Sharpmon");
-                if(hiddenCount > 0)
-                    Console.WriteLine("\t\t\t1: Return on the previous Sharpmon");
-                if (hiddenCount < 3)
-                    Console.WriteLine("\t\t\t2: View the next Sharpmon");
-
-                choice = Console.ReadLine();
-                /*Add the displayed sharpmon to the player's list of sharpmons.*/
-                if (choice == "0")
+                choice = Console.ReadKey(true);
+                hiddenSelector.PlaceAtLastPosition();
+                if(choice.Key == ConsoleKey.Enter)
                 {
-                    this.AddSharpmon(Sharpmon.GetSharpmon(Sharpdex.AllSharpmons[hiddenCount].Name, Sharpdex.AllSharpmons));
-                    return;
+                    this.AddSharpmon(Sharpmon.GetSharpmon(Sharpdex.AllSharpmons[hiddenScroll].Name, Sharpdex.AllSharpmons));       
+                    break;
                 }
-                /*Display the last displayed starter to the player only if it's not the first starter.*/
-                else if (choice == "1" && hiddenCount > 0)
+                else if(hiddenSelector.ModifyHiddenScroll(choice.Key, 4, out hiddenScroll))
                 {
                     Console.Clear();
-                    hiddenCount--;
-                }
-                /*Display the next starter to the player only if it's not the last starter.*/
-                else if (choice == "2" && hiddenCount < 3)
-                {
-                    Console.Clear();
-                    hiddenCount++;
-                }
-                /*If the user enter a different input than the 3 available,
-                  it loops back and ask another input.*/
-                else
-                {
-                    Console.Clear();
-                    Console.WriteLine("Enter a valid input.");
+                    this.DrawStarters(hiddenScroll);
+                    hiddenSelector.FirstDraw();
                 }
             }
         }
-        
+        private void DrawStarters(int hiddenScroll)
+        {
+            Sharpdex.AllSharpmons[hiddenScroll].GetColorElementalType();
+            Console.WriteLine($"\t\t _______________________________________\n" +
+                            $"\t\t|\t\t\t\t\t|\n" +
+                            $"\t\t|\t {Sharpdex.AllSharpmons[hiddenScroll].Name}\tHp: {Sharpdex.AllSharpmons[hiddenScroll].MaxHp} \t\t|\n" +
+                            $"\t\t|\t Attacks:\t{Sharpdex.AllSharpmons[hiddenScroll].GetAttack(0).GetName()}   \t|\n" +
+                            $"\t\t|\t\t\t{Sharpdex.AllSharpmons[hiddenScroll].GetAttack(1).GetName()}    \t|\n" +
+                            $"\t\t|_______________________________________|\n");
+            Console.ForegroundColor = ConsoleColor.Gray;
+
+        }
         /// <summary>
         /// Add a specific item to the player's list of items.
         /// </summary>

@@ -178,7 +178,8 @@ namespace Sharpmon
             "Soul",
             "Volcano",
             "Earth",
-            "The Elite Four"};
+            "the Elite Four"
+        };
         
         public static List<string> Towns = new List<string>{            //The list that will contain every existing towns of the game.
             "Pewter City",

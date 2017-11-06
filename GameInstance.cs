@@ -14,45 +14,55 @@ namespace Sharpmon
         //FIELDS
         public static Random Rng = new Random();                            //The random object that every class will use when it comes to Random number generator.
         public static string Choice;                                        //The value that will be used for stocking (almost) every choices in the game, one at a time.
+        private static ConsoleKeyInfo ChoiceChar;
         private static Player player;                                       //The one and only, main player of the game.
         private static string savePath = "SharpmonSave"; //The path to your future (or existing) save file of the game. Note that this is MY own path, it may not work for you.
         private static UnicodeEncoding ByteConverter = new UnicodeEncoding();
+        private static int hiddenSelector = 0;
+        private static Selector arrowSelector = new Selector();
+        private static string dynamicText;
+
         //METHODS
         public static void Run()
         {   
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            Console.CursorVisible = false;
             /*A little ASCII Art used to offer a better user experience.*/
-            Console.WriteLine("\t _____ _   _   ___  _______________  ________ _   _ \n" +
+            dynamicText = "\t _____ _   _   ___  _______________  ________ _   _ \n" +
                               "\t/  ___| | | | / _ \\ | ___ \\ ___ \\  \\/  |  _  | \\ | |\n" +
                               "\t\\ `--.| |_| |/ /_\\ \\| |_/ / |_/ / .  . | | | |  \\| |\n" +
                               "\t `--. \\  _  ||  _  ||    /|  __/| |\\/| | | | | . ` |\n" +
                               "\t/\\__/ / | | || | | || |\\ \\| |   | |  | \\ \\_/ / |\\  |\n" +
-                              "\t\\____/\\_| |_/\\_| |_/\\_| \\_\\_|   \\_|  |_/\\___/\\_| \\_/\n");
-            
+                              "\t\\____/\\_| |_/\\_| |_/\\_| \\_\\_|   \\_|  |_/\\___/\\_| \\_/\n";
+                            
+            Console.WriteLine(dynamicText);              
             /*Check if a save file of our game exist at the savepath entered. If so, display a little Menu so that
               the player can choose if he wants to continue his saved game or if he wants to start a new one.*/
             if (File.Exists(savePath))
             {
-                Console.WriteLine("\t\t\t0: New Game\n\t\t\t1: Continue");
+                arrowSelector.SetText("\tNew game\n\tLoad game");
                 while (true)
                 {
-                    Choice = Console.ReadLine();
-                    switch (Choice.ToLower())
+                    ChoiceChar = Console.ReadKey(true);
+                    if(ChoiceChar.Key == ConsoleKey.Enter)
                     {
-                        case "0":
-                        case "start":
-                        case "new game":
-                        case "new":
-                            NewGame();
-                            break;
-                        case "1":
-                        case "continue":
-                        case "charge":
-                            DeserializeItem(savePath);
-                            PrincipalScene();
-                            break;
-                        default:
-                            Console.WriteLine("Enter a valid input.");
-                            break;
+                        arrowSelector.PlaceAtLastPosition();
+                        switch (hiddenSelector)
+                        {
+                            case 0:
+                                NewGame();
+                                break;
+                            case 1:
+                                DeserializeItem(savePath);
+                                PrincipalScene();
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        arrowSelector.ModifyHiddenCounter(ChoiceChar.Key, out hiddenSelector);
                     }
                 }
             }
@@ -60,12 +70,11 @@ namespace Sharpmon
             else
             {
                 Console.WriteLine("\t\tPress any key to start a new game");
-                Console.ReadKey();
+                Console.ReadKey(true);
                 NewGame();
             }
 
         }
-        
         /// <summary>
         /// Method that instanciate a new player into our static player variable. Isn't called if the player is loaded.
         /// </summary>
@@ -84,91 +93,61 @@ namespace Sharpmon
         /// </summary>
         private static void PrincipalScene()
         {
+            DrawMainMenu();
             while (true)
             {
-                /*Those few lines before the switch are mostly here to offer a better user exeperience but also to display
-                  to the player what are his options and what is important to be known (such as his name, his sharpdollars and his main sharpmon).*/
-                Console.Clear();
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write($"Name: {player.Name} \t\tSharpdollars: {player.SharpDollars}\n" +
-                              "Current Sharpmon: ");
-                player.GetCurrentSharpmon().GetColorElementalType();
-                Console.Write($"{player.GetCurrentSharpmon().Name} ");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write($"level {player.GetCurrentSharpmon().GetLevel()} ({player.GetCurrentSharpmon().CurrentHp}/{player.GetCurrentSharpmon().MaxHp} Hp)\n\n");
-                Console.ForegroundColor = ConsoleColor.Gray;
-                if(player.currentTown != Sharpdex.Towns.Last())
+                ChoiceChar = Console.ReadKey(true);
+                /*If the player enter 0, he'll be transported to the discovering Scene that will eventually lead him to a fight.
+                  If he chooses 1, he'll fight for the current town's badge.
+                  If he chooses 2, he'll be able to change his current main sharpmon.
+                  If he chooses 3, he will be transported to the Shop so that he can buy or sell items.
+                  If he chooses 4, he will be transported to the sharpmon center so that he can heal his sharpmon or simply see all of them and their current Hp/Level.
+                  If he chooses 5, "save" or "save game", the game will be saved. It means that all the player's informations will be Serialized into a .txt file.
+                  If he chosses 6, the game will instantly be shut down.*/
+                if(ChoiceChar.Key == ConsoleKey.Enter)
                 {
-                    Console.WriteLine($"You're currently in {player.currentTown}.\nWhere do you want to go?\n\t0: Into the wild\n\t1: Fight for the {Sharpdex.Badges[Sharpdex.Towns.IndexOf(player.currentTown)]} badge\n\t2: Change current Sharpmon\n\t3: In the shop\n" +
-                                    "\t4: In the Sharpmon Center\n\t5: Save Game\n\t6: Exit Game");
+                    arrowSelector.PlaceAtLastPosition();
+                    switch (hiddenSelector)
+                    {
+                        case 0:
+                            if(player.GetCurrentSharpmon().IsAlive())
+                                Discovering();
+                            DrawMainMenu();
+                            break;
+                        case 1:
+                            if(player.GetCurrentSharpmon().IsAlive())
+                                FightNextArena();
+                            DrawMainMenu();
+                            break;
+                        case 2:
+                            ChangeCurrentSharpmon();
+                            DrawMainMenu();
+                            continue;
+                        case 3:
+                            ShopScene();
+                            DrawMainMenu();
+                            break;
+                        case 4:
+                            SharpmonCenterScene();
+                            DrawMainMenu();
+                            break;
+                        case 5:
+                            SerializeItem(savePath);
+                            continue;
+                        case 6:
+                            Environment.Exit(0);
+                            return;
+                        default:
+                            DrawMainMenu();
+                            continue;
+                    }
                 }
                 else
                 {
-                    Console.WriteLine($"You're currently in {player.currentTown}.\nWhere do you want to go?\n\t0: Into the wild\n\t1: Fight {player.currentTown}\n\t2: Change current Sharpmon\n\t3: In the shop\n" +
-                                  "\t4: In the Sharpmon Center\n\t5: Save Game\n\t6: Exit Game");
-                }
-
-                Choice = Console.ReadLine().ToLower();
-                /*If the player enter 0 or "into the wild" he's transported to the discovering Scene that will eventually lead him to a fight.
-                  If he chooses 1 or "arena" he'll fight for the current town's badge.
-                  If he chooses 2 or "change" he'll be able to change his current main sharpmon.
-                  If he chooses 3 or "in the shop", he will be transported to the Shop so that he can buy or sell items.
-                  If he chooses 4 or "in the sharpmon center", he will be transported to the sharpmon center so that he can heal his sharpmon or simply see all of them and their current Hp/Level.
-                  If he chooses 5, "save" or "save game", the game will be saved. It means that all the player's informations will be Serialized into a .txt file.
-                  If he chosses 6 or "exit game", the game will instantly be shut down.
-                  If he enters none of the above input, he will be asked to re-enter an input in hope of matching the above inputs.*/
-                switch (Choice)
-                {
-                    case "0":
-                    case "into the wild":
-                    case "wild":
-                        if(player.GetCurrentSharpmon().IsAlive())
-                            Discovering();
-                        break;
-                    case "1":
-                    case "fight the next arena":
-                    case "arena":
-                        if(player.GetCurrentSharpmon().IsAlive())
-                            FightNextArena();
-                        break;
-                    case "2":
-                    case "change":
-                        ChangeCurrentSharpmon();
-                        continue;
-                    case "3":
-                    case "in the shop":
-                    case "shop":
-                        ShopScene();
-                        break;
-                    case "4":
-                    case "in the sharpmon center":
-                    case "center":
-                        SharpmonCenterScene();
-                        break;
-                    case "5":
-                    case "save":
-                    case "save game":
-                        SerializeItem(savePath);
-                        continue;
-                    case "6":
-                    case "exit game":
-                    case "exit":
-                        Environment.Exit(0);
-                        return;
-                    case "7":
-                        player.GetCurrentSharpmon().SetExp(90000000);
-                        for(int i = 0; i < 5; i++)
-                            player.GetSharpmons().Add(Sharpmon.CopySharpmon(Sharpmon.GetRandomSharpmon(Rng.Next(Sharpdex.AllSharpmons.Count))));
-                        player.GetCurrentSharpmon().CheckForLevelUp();
-                        break;
-                    default:
-                        Console.WriteLine("Please enter a valid input.\nPress any key to continue.");
-                        Console.ReadKey();
-                        continue;
+                    arrowSelector.ModifyHiddenCounter(ChoiceChar.Key, out hiddenSelector);
                 }
             }
         }
-
         /// <summary>
         /// Static method used as a substitute of a loading screen to offer
         /// a better user experience but also change the range of the discoverable sharpmons
@@ -213,68 +192,71 @@ namespace Sharpmon
         /// </summary>
         private static void FightScene(Sharpmon ennemy, bool arenaFight = false)
         {
+            DrawFight(ennemy);
             while (true)
             {
-                Console.Clear();
-                ennemy.DrawTable();
-                player.GetCurrentSharpmon().DrawTable();
-
-                Console.WriteLine("\n\t\t\tWhat will you do?\n\t\t\t\t0: Attack\n\t\t\t\t1: Change Sharpmon\n\t\t\t\t2: Use item\n\t\t\t\t3: Capture\n\t\t\t\t4: Run away");
-                Choice = Console.ReadLine().ToLower();
-                switch (Choice)
+                ChoiceChar = Console.ReadKey(true);
+                if(ChoiceChar.Key == ConsoleKey.Enter)
                 {
-                    case "0":
-                    case "attack":
-                        FightSystem(player.GetCurrentSharpmon(), ennemy, arenaFight);
-                        return;
-                    case "1":
-                    case "change sharpmon":
-                        ChangeSystem(ennemy, arenaFight);
-                        return;
-                    case "2":
-                    case "use item":
-                        ItemSystem(ennemy, arenaFight);
-                        return;
-                    case "3":
-                    case "capture":
-                        if (!arenaFight)
-                        {
-                            if(player.GetSharpmons().Count < 6)
+                    arrowSelector.PlaceAtLastPosition();
+                    switch (hiddenSelector)
+                    {
+                        case 0:
+                            FightSystem(player.GetCurrentSharpmon(), ennemy, arenaFight);
+                            return;
+                        case 1:
+                            ChangeSystem(ennemy, arenaFight);
+                            return;
+                        case 2:
+                            ItemSystem(ennemy, arenaFight);
+                            return;
+                        case 3:
+                            if (!arenaFight)
                             {
-                                Console.WriteLine($"You threw a Sharpball at {ennemy.Name}!");
-                                CaptureSystem(player.GetCurrentSharpmon(), ennemy);
+                                if(player.GetSharpmons().Count < 6)
+                                {
+                                    Console.WriteLine($"You threw a Sharpball at {ennemy.Name}!");
+                                    CaptureSystem(player.GetCurrentSharpmon(), ennemy);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("You can't capture more sharpmons unless you put some into your PC! (in the Sharpmon Center)\nPress a key to continue the fight.");
+                                    Console.ReadKey(true);
+                                    DrawFight(ennemy);
+                                    continue;
+                                }
                             }
                             else
                             {
-                                Console.WriteLine("You can't capture more sharpmons unless you put some into your PC! (in the Sharpmon Center)\nPress a key to continue the fight.");
-                                Console.ReadKey();
+                                Console.WriteLine("You can't capture someone's sharpmon!\nPress a key to continue the fight.");
+                                Console.ReadKey(true);
+                                DrawFight(ennemy);
                                 continue;
                             }
-                        }
-                        else
-                        {
-                            Console.WriteLine("You can't capture someone's sharpmon!\nPress a key to continue the fight.");
-                            Console.ReadKey();
-                            continue;
-                        }
-                        return;
-                    case "4":
-                    case "run away":
-                        if (!arenaFight)
-                        {
-                            EscapeSystem(player.GetCurrentSharpmon(), ennemy);    
                             return;
-                        }
-                        else
-                        {
-                            Console.WriteLine("You can't flee from an arena fight until all your sharpmons are KO!\nPress a key to continue the fight.");
-                            Console.ReadKey();
+                        case 4:
+                            if (!arenaFight)
+                            {
+                                EscapeSystem(player.GetCurrentSharpmon(), ennemy);    
+                                return;
+                            }
+                            else
+                            {
+                                Console.WriteLine("You can't flee from an arena fight until all your sharpmons are KO!\nPress a key to continue the fight.");
+                                Console.ReadKey(true);
+                                DrawFight(ennemy);
+                                continue;
+                            }
+                        default:
+                            Console.WriteLine("Please enter a valid input.\nPress a key to continue the fight.");
+                            Console.ReadKey(true);
+                            DrawFight(ennemy);
                             continue;
-                        }
-                    default:
-                        Console.WriteLine("Please enter a valid input.\nPress a key to continue the fight.");
-                        Console.ReadKey();
-                        continue;
+                    }
+                }
+                else
+                {
+                    arrowSelector.ModifyHiddenCounter(ChoiceChar.Key, out hiddenSelector);
                 }
             }
         }
@@ -322,7 +304,7 @@ namespace Sharpmon
                         return;
                     default:
                         Console.WriteLine("Please enter a valid input.\nPress any key to continue.");
-                        Console.ReadKey();
+                        Console.ReadKey(true);
                         continue;
                 }
             }
@@ -334,146 +316,131 @@ namespace Sharpmon
         /// </summary>
         private static void SharpmonCenterScene()
         {
+            DrawSharpmonCenter();
             while (true)
             {
-                Console.Clear();
-                Console.WriteLine("Welcome in the Sharpmon Center! Do you want to heal all your sharpmons or exit the center?\n\t0: Heal all the sharpmons");
-                player.GetSharpmons().ForEach(sharpmon => Console.WriteLine($"\t\t{sharpmon.Name} (Level {sharpmon.GetLevel()}): {sharpmon.CurrentHp}/{sharpmon.MaxHp}"));
-                Console.WriteLine("\n\t1: Launch your PC\n\t2: Exit center");
-                Choice = Console.ReadLine().ToLower();
-                switch (Choice)
+                ChoiceChar = Console.ReadKey(true);
+                if(ChoiceChar.Key == ConsoleKey.Enter)
                 {
-                    case "0":
-                    case "heal":
-                    case "heal all the sharpmons":
-                        player.GetSharpmons().ForEach(sharpmon => sharpmon.CurrentHp = sharpmon.MaxHp);
-                        Console.Clear();
-                        Console.Write("All your Sharpmons have been healed!\nYou're now exiting the center.\nExiting the center.");
-                        Loading(200, 10);
-                        return;
-                    case "1":
-                    case "pc":
-                        Console.Write("Launching your PC.");
-                        Loading(100, 10);
-                        LaunchPC();
-                        continue;
-                    case "2":
-                    case "exit center":
-                        Console.Write("Exiting the center.");
-                        Loading(100, 10);
-                        return;
-                    default:
-                        continue;
+                    arrowSelector.PlaceAtLastPosition();
+                    switch (hiddenSelector)
+                    {
+                        case 0:
+                            player.GetSharpmons().ForEach(sharpmon => sharpmon.CurrentHp = sharpmon.MaxHp);
+                            Console.Clear();
+                            Console.Write("All your Sharpmons have been healed!\nYou're now exiting the center.\nExiting the center.");
+                            Loading(200, 10);
+                            return;
+                        case 1:
+                            Console.Write("Launching your PC.");
+                            Loading(100, 10);
+                            LaunchPC();
+                            DrawSharpmonCenter();
+                            continue;
+                        case 2:
+                            Console.Write("Exiting the center.");
+                            Loading(100, 10);
+                            return;
+                        default:
+                            continue;
+                    }
                 }
+                else
+                    arrowSelector.ModifyHiddenCounter(ChoiceChar.Key, out hiddenSelector);
             }
         }
         private static void LaunchPC()
         {
+            DrawPC();
             while (true)
             {
-                Console.Clear();
-                Console.WriteLine("You're logged into your PC!\nDo you want to store your sharpmons, take one or log out?\n\t0: Store a sharpmon\n\t1: Take a sharpmon\n\t2: Log out");
-            
-                Choice = Console.ReadLine().ToLower();
-                switch (Choice)
+                ChoiceChar = Console.ReadKey(true);
+                if(ChoiceChar.Key == ConsoleKey.Enter)
                 {
-                    case "0":
-                    case "store":
-                        StoreInPC();
-                        continue;
-                    case "1":
-                    case "take":
-                        TakeFromPC();
-                        continue;
-                    case "2":
-                    case "log off":
-                        return;
-                    default:
-                        continue;
+                    arrowSelector.PlaceAtLastPosition();
+                    switch (hiddenSelector)
+                    {
+                        case 0:
+                            StoreInPC();
+                            DrawPC();
+                            continue;
+                        case 1:
+                            TakeFromPC();
+                            DrawPC();
+                            continue;
+                        case 2:
+                            return;
+                        default:
+                            continue;
+                    }
                 }
+                else
+                    arrowSelector.ModifyHiddenCounter(ChoiceChar.Key, out hiddenSelector);
             }
+        }
+        private static void DrawPC()
+        {
+            hiddenSelector = 0;
+            Console.Clear();
+            Console.WriteLine("You're logged into your PC!\nDo you want to store your sharpmons, take one or log out?");
+            arrowSelector.SetText("\tStore a sharpmon\n\tTake a sharpmon\n\tLog out");
         }
         private static void StoreInPC()
         {
-            Console.WriteLine("Choose a Sharpmon to store in your PC:");
-            for (int i = 0; i < player.GetSharpmons().Count; i++)
-            { 
-                player.GetSharpmons()[i].GetColorElementalType();
-                Console.WriteLine($"\t\t{i}: {player.GetSharpmons()[i].Name} (Hp: {player.GetSharpmons()[i].CurrentHp}/{player.GetSharpmons()[i].MaxHp})");
-                Console.ForegroundColor = ConsoleColor.Gray;
-            }
-            Console.WriteLine($"\n\tEnter: Return to the PC's menu");
-            int parsedChoice;
+            DrawStorage();
             while (true)
             {
-                Choice = Console.ReadLine();
-                if (int.TryParse(Choice, out parsedChoice) && parsedChoice >= 0 && parsedChoice < player.GetSharpmons().Count)
+                ChoiceChar = Console.ReadKey(true);
+                if(ChoiceChar.Key == ConsoleKey.Enter)
                 {
-                    if(player.GetSharpmons().Count > 1)
+                    arrowSelector.PlaceAtLastPosition();
+                    if (hiddenSelector >= 0 && hiddenSelector < player.GetSharpmons().Count)
                     {
-                        Console.Write("Placing");
-                        player.GetSharpmons()[parsedChoice].ToString();
-                        Console.WriteLine("in your PC.");
-                        player.AddSharpmonInPC(player.GetSharpmons()[parsedChoice]);
-                        player.GetSharpmons().RemoveAt(parsedChoice);
-                        Loading(150, 5);
-                        return;
+                        if(player.GetSharpmons().Count > 1)
+                        {
+                            Console.Write("Placing");
+                            player.GetSharpmons()[hiddenSelector].ToString();
+                            Console.WriteLine("in your PC.");
+                            player.AddSharpmonInPC(player.GetSharpmons()[hiddenSelector]);
+                            player.GetSharpmons().RemoveAt(hiddenSelector);
+                            Loading(150, 5);
+                            return;
+                        }
+                        else
+                        {
+                            Console.WriteLine("You can't store your last sharpmon.\nPress any key to return to the PC's menu");
+                            Console.ReadKey(true);
+                            return;
+                        }
                     }
-                    else
-                    {
-                        Console.WriteLine("You can't store your last sharpmon.\nPress any key to return to the PC's menu");
-                        Console.ReadKey();
+                    else if(hiddenSelector == player.GetSharpmons().Count)
                         return;
-                    }
-                }
-                else if(Choice == "")
-                {
-                    return;
                 }
                 else
-                {
-                    Console.WriteLine("Enter a valid input.");
-                }
+                    arrowSelector.ModifyHiddenCounter(ChoiceChar.Key, out hiddenSelector);
             }
         }
         private static void TakeFromPC()
         {
-            int page = 1;
+            int page = 0;
             int pageMax = (int)Math.Ceiling(player.GetSharpmonsInPC().Count/8f);
-            int parsedChoice;
+            DrawSharpmonWithdraw(page, pageMax);
             while (true)
             {
-                Console.Clear();
-                Console.WriteLine($"Choose a Sharpmon from your PC:\t(Page {page}/{pageMax})");
-                for (int i = (page-1)*8; i < ((page < pageMax) ? page*8: ((page-1)*8)+player.GetSharpmonsInPC().Count%8); i++)
+                ChoiceChar = Console.ReadKey(true);
+                if(ChoiceChar.Key == ConsoleKey.Enter)
                 {
-                    player.GetSharpmonsInPC()[i].GetColorElementalType();
-                    Console.WriteLine($"\t\t{i-((page-1)*8)}: {player.GetSharpmonsInPC()[i].Name} (Hp: {player.GetSharpmonsInPC()[i].CurrentHp}/{player.GetSharpmonsInPC()[i].MaxHp})");
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                }
-                if(page < pageMax)
-                {
-                    Console.Write($"\t8: Next page");
-                }
-                if(page > 1)
-                {
-                    Console.Write($"\n\t9 Previous page");
-                }
-                Console.WriteLine("\n\tEnter: Return to the PC's menu");
-
-
-                Choice = Console.ReadLine();
-                if(int.TryParse(Choice, out parsedChoice))
-                {
-                    if (parsedChoice >= 0 && parsedChoice < player.GetSharpmonsInPC().Count%8)
+                    arrowSelector.PlaceAtLastPosition();
+                    if (hiddenSelector >= 0 && hiddenSelector < ((page+1 < pageMax) ? (page+1)*8: (page*8)+player.GetSharpmonsInPC().Count%8))
                     {
+                        arrowSelector.ResetScroll();
                         if(player.GetSharpmons().Count < 6)
                         {
                             Console.Write("Placing");
-                            player.GetSharpmonsInPC()[(page-1)*8+parsedChoice].ToString();
+                            player.GetSharpmonsInPC()[page*8+hiddenSelector].ToString();
                             Console.WriteLine("in your inventory.");
-                            player.GetSharpmons().Add((player.GetSharpmonsInPC()[(page-1)*8+parsedChoice]));
-                            player.GetSharpmonsInPC().RemoveAt((page-1)*8+parsedChoice); 
+                            player.GetSharpmons().Add((player.GetSharpmonsInPC()[page*8+hiddenSelector]));
+                            player.GetSharpmonsInPC().RemoveAt(page*8+hiddenSelector); 
                             Loading(200, 5);
                             return;
                         }
@@ -484,38 +451,14 @@ namespace Sharpmon
                             return;
                         }
                     }
-                    else if(parsedChoice == 8 && page < pageMax)
-                    {
-                        page++;
-                        continue;
-                    }
-                    else if(parsedChoice == 9 && page > 1)
-                    {
-                        page--;
-                        continue;
-                    }
+                    else if(hiddenSelector == ((page+1 < pageMax) ? (page+1)*8: (page*8)+player.GetSharpmonsInPC().Count%8))
+                        return;
                 }
-                
-                else if(Choice == "")
-                {
-                    return;
-                }
+                else if(arrowSelector.ModifyHiddenScroll(ChoiceChar.Key, pageMax, out page))
+                    DrawSharpmonWithdraw(page, pageMax);
+                else
+                    arrowSelector.ModifyHiddenCounter(ChoiceChar.Key, out hiddenSelector);
             }
-        }
-        /// <summary>
-        /// Method to draw the sharpmon's stat table in the color of its element.
-        /// </summary>
-        /// <param name="entity"></param>
-        private static void DrawTable(this Sharpmon entity)
-        {
-            entity.GetColorElementalType();
-            Console.WriteLine($"\t _______________________________________________\n" +
-                              $"\t|\t{entity.Name} Level {entity.GetLevel()}: \tHp: {entity.CurrentHp}/{entity.MaxHp}   \t|\n" +
-                              $"\t|\tPow: {entity.CurrentPower}   \tDef: {entity.CurrentDefense}  \t\t|\n" +
-                              $"\t|\tAcc: {entity.CurrentAccucary}   \tDodge: {entity.CurrentDodge}\t\t|\n" +
-                              $"\t|\tSpd: {entity.CurrentSpeed}   \t\t\t\t|\n" +
-                              $"\t|_______________________________________________|");
-            Console.ForegroundColor = ConsoleColor.White;
         }
 
         /// <summary>
@@ -648,21 +591,23 @@ namespace Sharpmon
         /// <param name="ennemy"></param>
         private static Attack ChooseAttack(this Sharpmon currentSharpmon)
         {
-            Console.WriteLine($"Choose your attack:");
-            for (int i = 0; i < currentSharpmon.GetAttacks().Count; i++)
-                Console.WriteLine($"\t {i}: {currentSharpmon.GetAttack(i).GetName()}");
-
+            DrawAttacks(currentSharpmon);
             while (true)
             {
-                Choice = Console.ReadLine().ToLower();
-                for (int i = 0; i < currentSharpmon.GetAttacks().Count; i++)
+                ChoiceChar = Console.ReadKey(true);
+                if(ChoiceChar.Key == ConsoleKey.Enter)
                 {
-                    if (Choice == currentSharpmon.GetAttack(i).GetName().ToLower() || Choice == $"{i}")
+                    for (int i = 0; i < currentSharpmon.GetAttacks().Count; i++)
                     {
-                        return currentSharpmon.GetAttack(i);
+                        if (hiddenSelector == i)
+                        {
+                            arrowSelector.PlaceAtLastPosition();
+                            return currentSharpmon.GetAttack(i);
+                        }
                     }
                 }
-                Console.WriteLine("Please entere a valid index or name.");
+                else
+                    arrowSelector.ModifyHiddenCounter(ChoiceChar.Key, out hiddenSelector);
             }
         }
         /// <summary>
@@ -672,7 +617,7 @@ namespace Sharpmon
         private static void EndTurn(Sharpmon ennemy, bool arenaFight = false)
         {
             Console.WriteLine("Both Sharpmon attacked, press any key to continue the fight.");
-            Console.ReadKey();
+            Console.ReadKey(true);
             FightScene(ennemy, arenaFight);
             return;
         }
@@ -686,7 +631,7 @@ namespace Sharpmon
         private static void Win(this Sharpmon currentSharpmon, Sharpmon ennemy, bool arenaFight = false)
         {
             Console.WriteLine($"{ennemy.Name} fainted.\nPress any key to continue.");
-            Console.ReadKey();
+            Console.ReadKey(true);
             Console.Clear();
             int temp = (arenaFight) ? Rng.Next(50, 70) * ennemy.GetLevel() : Rng.Next(120, 150) * ennemy.GetLevel();
             currentSharpmon.CurrentExperience += temp;
@@ -724,27 +669,23 @@ namespace Sharpmon
 
         private static void ChangeCurrentSharpmon()
         {
-            string choice;
-            int ParsedChoice;
+            DrawChangeCurrentSharpmon();
             while (true)
             {
-                Console.WriteLine("Choose which one of your sharpmon you want as your current one:");
-                for (int i = 0; i < player.GetSharpmons().Count; i++)
-                { 
-                    player.GetSharpmons()[i].GetColorElementalType();
-                    Console.WriteLine($"\t\t{i}: {player.GetSharpmons()[i].Name} (Hp: {player.GetSharpmons()[i].CurrentHp}/{player.GetSharpmons()[i].MaxHp})");
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                }
-                choice = Console.ReadLine();
-                if (int.TryParse(choice, out ParsedChoice) && ParsedChoice >= 0 && ParsedChoice < player.GetSharpmons().Count)
+                ChoiceChar = Console.ReadKey(true);
+                if(ChoiceChar.Key == ConsoleKey.Enter)
                 {
-                    Sharpmon TemporarySharpmon = player.GetCurrentSharpmon();
-                    player.GetSharpmons()[0] = player.GetSharpmons()[ParsedChoice];
-                    player.GetSharpmons()[ParsedChoice] = TemporarySharpmon;
-                    return;
+                    arrowSelector.PlaceAtLastPosition();
+                    if (hiddenSelector >= 0 && hiddenSelector < player.GetSharpmons().Count)
+                    {
+                        Sharpmon TemporarySharpmon = player.GetCurrentSharpmon();
+                        player.GetSharpmons()[0] = player.GetSharpmons()[hiddenSelector];
+                        player.GetSharpmons()[hiddenSelector] = TemporarySharpmon;
+                        return;
+                    }
+                    else
+                        arrowSelector.ModifyHiddenCounter(ChoiceChar.Key, out hiddenSelector);
                 }
-                else
-                    Console.WriteLine("Please enter a valid input.");
             }
             
         }
@@ -754,69 +695,66 @@ namespace Sharpmon
         /// <param name="ennemy"></param>
         private static void ChangeSystem(Sharpmon ennemy, bool arenaFight = false)
         {
-            
             Console.WriteLine("You current Sharpmon fainted!");
-            string choice;
-            int ParsedChoice;
+            DrawChangeSystem();
             while (true)
             {
-                Console.WriteLine("Choose a Sharpmon:");
-                for (int i = 0; i < player.GetSharpmons().Count; i++)
-                { 
-                    player.GetSharpmons()[i].GetColorElementalType();
-                    Console.WriteLine($"\t\t{i}: {player.GetSharpmons()[i].Name} (Hp: {player.GetSharpmons()[i].CurrentHp}/{player.GetSharpmons()[i].MaxHp})");
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-                Console.WriteLine($"\n\t{player.GetSharpmons().Count}: Continue the fight with current the Sharpmon\n\t{player.GetSharpmons().Count + 1}: Leave the fight");
-                choice = Console.ReadLine();
-                if (int.TryParse(choice, out ParsedChoice) && ParsedChoice > 0 && ParsedChoice < player.GetSharpmons().Count)
+                ChoiceChar = Console.ReadKey(true);
+                if(ChoiceChar.Key == ConsoleKey.Enter)
                 {
-                    if (player.GetSharpmons()[ParsedChoice].IsAlive())
+                    arrowSelector.PlaceAtLastPosition();
+                    if (hiddenSelector > 0 && hiddenSelector < player.GetSharpmons().Count)
                     {
-                        Sharpmon TemporarySharpmon = player.GetCurrentSharpmon();
-                        player.GetSharpmons()[0] = player.GetSharpmons()[ParsedChoice];
-                        player.GetSharpmons()[ParsedChoice] = TemporarySharpmon;
-                        Console.WriteLine($"I choose you {player.GetCurrentSharpmon().Name}!");
-                        Loading(350, 3);
-                        FightScene(ennemy, arenaFight);
-                        return;
-                    }
-                    else
-                    {
-                        Console.WriteLine("You can't choose this sharpmon because he's KO.");
-                        continue;
-                    }
+                        if (player.GetSharpmons()[hiddenSelector].IsAlive())
+                        {
+                            Sharpmon TemporarySharpmon = player.GetCurrentSharpmon();
+                            player.GetSharpmons()[0] = player.GetSharpmons()[hiddenSelector];
+                            player.GetSharpmons()[hiddenSelector] = TemporarySharpmon;
+                            Console.WriteLine($"I choose you {player.GetCurrentSharpmon().Name}!");
+                            Loading(350, 3);
+                            FightScene(ennemy, arenaFight);
+                            return;
+                        }
+                        else
+                        {
+                            Console.WriteLine("You can't choose this sharpmon because he's KO.");
+                            DrawChangeSystem();
+                            continue;
+                        }
 
-                }
-                else if (int.TryParse(choice, out ParsedChoice) &&(ParsedChoice == player.GetSharpmons().Count || ParsedChoice == 0))
-                {
-                    if (!player.GetCurrentSharpmon().IsAlive())
-                    {
-                        Console.Write("Your current Sharpmon is KO.");
-                        continue;
                     }
-                    else
+                    else if (hiddenSelector == 0)
                     {
-                        FightScene(ennemy, arenaFight);
-                        return;
+                        if (!player.GetCurrentSharpmon().IsAlive())
+                        {
+                            Console.Write("Your current Sharpmon is KO.");
+                            DrawChangeSystem();
+                            continue;
+                        }
+                        else
+                        {
+                            FightScene(ennemy, arenaFight);
+                            return;
+                        }
                     }
-                }
-                else if (int.TryParse(choice, out ParsedChoice) && ParsedChoice == player.GetSharpmons().Count + 1)
-                {
-                    if(player.GetSharpmons().Where(sharpmon => sharpmon.CurrentHp > 0).Any())
+                    else if (hiddenSelector == player.GetSharpmons().Count)
                     {
-                        Console.WriteLine("You can't run away from a fight if any of your sharpmon is alive!");
-                        continue;
-                    }
-                    else
-                    {
-                        Console.Write("You fled the fight.\nHeading back to town");
-                        Loading(150,10);
-                        return;
+                        if(player.GetSharpmons().Where(sharpmon => sharpmon.CurrentHp > 0).Any())
+                        {
+                            Console.WriteLine("You can't run away from a fight if any of your sharpmon is alive!");
+                            DrawChangeSystem();
+                            continue;
+                        }
+                        else
+                        {
+                            Console.Write("You fled the fight.\nHeading back to town");
+                            Loading(150,10);
+                            return;
+                        }
                     }
                 }
                 else
-                    Console.WriteLine("Please enter a valid input.");
+                    arrowSelector.ModifyHiddenCounter(ChoiceChar.Key, out hiddenSelector);
             }
             
         }
@@ -829,22 +767,17 @@ namespace Sharpmon
             if (!player.GetItems().Any())
             {
                 Console.WriteLine("Your inventory is empty.\nPress any key to return to the fight.");
-                Console.ReadKey();
+                Console.ReadKey(true);
                 FightScene(ennemy, arenaFight);
                 return;
             }
             else
             {
-                Inventory();
-                Console.Write("Enter the name of the item you want to use: (Press enter to return to the fight)");
-                string choice;
-                string tempChoice;
-                int hiddenCount = 0;
-                int ParsedChoice = 0;
+                DrawInventory();
                 while (true)
                 {
-                    choice = Console.ReadLine();
-                    if (Item.ContainItem(choice, player.GetItems()))
+                    ChoiceChar = Console.ReadKey(true);
+                    if ()
                     {
                         Console.WriteLine("On which Sharpmon do you want to use it?");
                         foreach (Sharpmon sharpmon in player.GetSharpmons())
@@ -873,7 +806,7 @@ namespace Sharpmon
                                     else
                                     {
                                         Console.WriteLine("\nPress any key to continue.");
-                                        Console.ReadKey();
+                                        Console.ReadKey(true);
                                         FightScene(ennemy, arenaFight);
                                         return;
                                     }
@@ -932,7 +865,7 @@ namespace Sharpmon
                 else
                 {
                     Console.WriteLine("The turn has ended. Press any key to continue.");
-                    Console.ReadKey();
+                    Console.ReadKey(true);
                     FightScene(ennemy);
                     return;
                 }
@@ -960,22 +893,9 @@ namespace Sharpmon
                 Console.WriteLine("You failed your escape.");
                 ennemy.GetAttack(Rng.Next(2)).LaunchAttack(ennemy, player.GetCurrentSharpmon());
                 Console.WriteLine("Press any key to continue.");
-                Console.ReadKey();
+                Console.ReadKey(true);
                 FightScene(ennemy);
                 return;
-            }
-        }
-
-        /// <summary>
-        /// Display dynamically all the item in the player inventory.
-        /// </summary>
-        private static void Inventory()
-        {
-            Console.WriteLine("Your inventory contains:");
-            foreach (Item item in Sharpdex.AllItems)
-            {
-                if (Item.ContainItem(item.GetName(), player.GetItems()))
-                    Console.WriteLine($"{item.GetName()} \tx{Item.GetNumberOfItem(item.GetName(), player.GetItems())}\t|{item.GetDescription()}");
             }
         }
         /// <summary>
@@ -1051,7 +971,7 @@ namespace Sharpmon
             if (player.GetItems().Count == 0)
             {
                 Console.WriteLine("Your inventory is empty.\nPress any key to return to the shop.");
-                Console.ReadKey();
+                Console.ReadKey(true);
                 return;
             }
             else
@@ -1112,6 +1032,7 @@ namespace Sharpmon
             }
         }
 
+        /* Save and Load game */
         /// <summary>
         /// Method used to Serialize (or save) the player's stats and objects into a json file.
         /// </summary>
@@ -1164,5 +1085,154 @@ namespace Sharpmon
             }
             return buffer;
         }
+
+
+        /* Every draw method of the game */
+        private static void DrawMainMenu()
+        {
+            hiddenSelector = 0;
+            if(player.currentTown != Sharpdex.Towns.Last())
+                dynamicText = $"\tInto the wild\n\tFight for the {Sharpdex.Badges[Sharpdex.Towns.IndexOf(player.currentTown)]} badge\n\tChange current Sharpmon\n\tIn the shop\n" +
+                                "\tIn the Sharpmon Center\n\tSave Game\n\tExit Game";
+            else
+                dynamicText = $"\tInto the wild\n\tFight {Sharpdex.Badges[Sharpdex.Towns.IndexOf(player.currentTown)]}\n\tChange current Sharpmon\n\tIn the shop\n" +
+                                "\tIn the Sharpmon Center\n\tSave Game\n\tExit Game";
+            Console.Clear();
+            DrawTownHeader();
+            arrowSelector.SetText(dynamicText);
+        }
+
+        private static void DrawTownHeader()
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write($"Name: {player.Name} \t\tSharpdollars: {player.SharpDollars}\n" +
+                            "Current Sharpmon: ");
+            player.GetCurrentSharpmon().GetColorElementalType();
+            Console.Write($"{player.GetCurrentSharpmon().Name} ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write($"level {player.GetCurrentSharpmon().GetLevel()} ({player.GetCurrentSharpmon().CurrentHp}/{player.GetCurrentSharpmon().MaxHp} Hp)\n\n");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine($"You're currently in {player.currentTown}.\nWhere do you want to go?");
+        }
+
+        private static void DrawFight(Sharpmon ennemy)
+        {
+            hiddenSelector = 0;
+            Console.Clear();
+            ennemy.DrawTable();
+            player.GetCurrentSharpmon().DrawTable();
+            Console.Write("\n\t\t\tWhat will you do?\n\t\t\t");
+            arrowSelector.SetText("\tAttack\n\t\t\t\tChange Sharpmon\n\t\t\t\tUse item\n\t\t\t\tCapture\n\t\t\t\tRun away");
+        }
+
+        private static void DrawAttacks(Sharpmon currentSharpmon)
+        {
+            hiddenSelector = 0;
+            dynamicText = "";
+            for (int i = 0; i < currentSharpmon.GetAttacks().Count; i++)
+                dynamicText += $"\t{currentSharpmon.GetAttack(i).GetName()}\n";
+            Console.WriteLine($"Choose your attack:");
+            arrowSelector.SetText(dynamicText);
+        }
+
+        private static void DrawChangeSystem()
+        {
+            hiddenSelector = 0;
+            dynamicText = "";
+            for (int i = 0; i < player.GetSharpmons().Count; i++)
+            {
+                if(i == 0)
+                    dynamicText += ($"\t{player.GetSharpmons()[i].Name} (Hp: {player.GetSharpmons()[i].CurrentHp}/{player.GetSharpmons()[i].MaxHp}) | Continue the fight with current the Sharpmon\n");
+                else
+                    dynamicText += ($"\t{player.GetSharpmons()[i].Name} (Hp: {player.GetSharpmons()[i].CurrentHp}/{player.GetSharpmons()[i].MaxHp})\n");
+            }
+            dynamicText += ($"\tLeave the fight");
+            Console.WriteLine("Choose a Sharpmon:");
+            arrowSelector.SetText(dynamicText, player);      
+        }
+
+        private static void DrawChangeCurrentSharpmon()
+        {
+            hiddenSelector = 0;
+            Console.Clear();
+            Console.WriteLine("Choose which one of your sharpmon you want as your current one:");
+            dynamicText = "";
+            for (int i = 0; i < player.GetSharpmons().Count; i++)
+            {
+                if(i == 0)
+                    dynamicText += ($"\t{player.GetSharpmons()[i].Name} (Hp: {player.GetSharpmons()[i].CurrentHp}/{player.GetSharpmons()[i].MaxHp}) | Continue the fight with current the Sharpmon\n");
+                else
+                    dynamicText += ($"\t{player.GetSharpmons()[i].Name} (Hp: {player.GetSharpmons()[i].CurrentHp}/{player.GetSharpmons()[i].MaxHp})\n");
+            }
+            arrowSelector.SetText(dynamicText, player);
+        }
+        private static void DrawSharpmonCenter()
+        {
+            hiddenSelector = 0;
+            Console.Clear();
+            Console.WriteLine("Welcome in the Sharpmon Center!\nThis is all the sharpmons in your inventory and their health:");
+            player.GetSharpmons().ForEach(sharpmon => Console.WriteLine($"\t{sharpmon.Name} (Level {sharpmon.GetLevel()}): {sharpmon.CurrentHp}/{sharpmon.MaxHp}"));
+            Console.WriteLine();
+            arrowSelector.SetText("\tHeal all the sharpmons\n\tLaunch your PC\n\tExit center");
+        }
+
+        private static void DrawStorage()
+        {
+            hiddenSelector = 0;
+            dynamicText = "";
+            for (int i = 0; i < player.GetSharpmons().Count; i++)
+            {
+                if(i == 0)
+                    dynamicText += ($"\t{player.GetSharpmons()[i].Name} (Hp: {player.GetSharpmons()[i].CurrentHp}/{player.GetSharpmons()[i].MaxHp}) | Continue the fight with current the Sharpmon\n");
+                else
+                    dynamicText += ($"\t{player.GetSharpmons()[i].Name} (Hp: {player.GetSharpmons()[i].CurrentHp}/{player.GetSharpmons()[i].MaxHp})\n");
+            }
+            dynamicText += $"\tReturn to the PC's menu";
+            Console.WriteLine("Choose a Sharpmon to store in your PC:");
+            arrowSelector.SetText(dynamicText, player);
+        }
+
+        private static void DrawSharpmonWithdraw(int page, int pageMax)
+        {
+            hiddenSelector = 0;
+            dynamicText = "";
+            for (int i = page*8; i < ((page+1 < pageMax) ? (page+1)*8: (page*8)+player.GetSharpmonsInPC().Count%8); i++)
+                dynamicText += $"\t{player.GetSharpmonsInPC()[i].Name}\t(Hp: {player.GetSharpmonsInPC()[i].CurrentHp}/{player.GetSharpmonsInPC()[i].MaxHp})\n";
+
+            dynamicText += "\tReturn to the PC's menu";
+            Console.Clear();
+            Console.WriteLine($"Choose a Sharpmon from your PC:\t(Page {page+1}/{pageMax})");
+            arrowSelector.SetText(dynamicText, player, true, page, pageMax);
+        }
+
+        /// <summary>
+        /// Method to draw the sharpmon's stat table in the color of its element.
+        /// </summary>
+        /// <param name="entity"></param>
+        private static void DrawTable(this Sharpmon entity)
+        {
+            entity.GetColorElementalType();
+            Console.WriteLine($"\t _______________________________________________\n" +
+                              $"\t|\t{entity.Name} Level {entity.GetLevel()}: \tHp: {entity.CurrentHp}/{entity.MaxHp}   \t|\n" +
+                              $"\t|\tPow: {entity.CurrentPower}   \tDef: {entity.CurrentDefense}  \t\t|\n" +
+                              $"\t|\tAcc: {entity.CurrentAccucary}   \tDodge: {entity.CurrentDodge}\t\t|\n" +
+                              $"\t|\tSpd: {entity.CurrentSpeed}   \t\t\t\t|\n" +
+                              $"\t|_______________________________________________|");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        /// <summary>
+        /// Display dynamically all the item in the player inventory.
+        /// </summary>
+        private static void DrawInventory()
+        {
+            dynamicText = "";
+            Console.WriteLine("Your inventory contains:");
+            foreach (Item item in player.GetItems().Distinct())
+                dynamicText += $"{item.GetName()} \tx{Item.GetNumberOfItem(item.GetName(), player.GetItems())}\t|{item.GetDescription()}\n";
+            Console.Write("Select the item you want to use:");
+            arrowSelector.SetText(dynamicText);
+        }
+
     }
 }
