@@ -767,17 +767,22 @@ namespace Sharpmon
             if (!player.GetItems().Any())
             {
                 Console.WriteLine("Your inventory is empty.\nPress any key to return to the fight.");
-                Console.ReadKey(true);
+                Console.ReadKey();
                 FightScene(ennemy, arenaFight);
                 return;
             }
             else
             {
                 DrawInventory();
+                Console.Write("Enter the name of the item you want to use: (Press enter to return to the fight)");
+                string choice;
+                string tempChoice;
+                int hiddenCount = 0;
+                int ParsedChoice = 0;
                 while (true)
                 {
-                    ChoiceChar = Console.ReadKey(true);
-                    if ()
+                    choice = Console.ReadLine();
+                    if (Item.ContainItem(choice, player.GetItems()))
                     {
                         Console.WriteLine("On which Sharpmon do you want to use it?");
                         foreach (Sharpmon sharpmon in player.GetSharpmons())
@@ -806,7 +811,7 @@ namespace Sharpmon
                                     else
                                     {
                                         Console.WriteLine("\nPress any key to continue.");
-                                        Console.ReadKey(true);
+                                        Console.ReadKey();
                                         FightScene(ennemy, arenaFight);
                                         return;
                                     }
