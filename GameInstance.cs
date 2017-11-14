@@ -366,6 +366,7 @@ namespace Sharpmon
                             continue;
                         case 1:
                             TakeFromPC();
+                            arrowSelector.ResetScroll();
                             DrawPC();
                             continue;
                         case 2:
@@ -431,7 +432,7 @@ namespace Sharpmon
                 if(ChoiceChar.Key == ConsoleKey.Enter)
                 {
                     arrowSelector.PlaceAtLastPosition();
-                    if (hiddenSelector >= 0 && hiddenSelector < ((page+1 < pageMax) ? (page+1)*8: (page*8)+player.GetSharpmonsInPC().Count%8))
+                    if ((page*8)+hiddenSelector < ((page+1 < pageMax) ? (page+1)*8: (page*8)+player.GetSharpmonsInPC().Count%8))
                     {
                         arrowSelector.ResetScroll();
                         if(player.GetSharpmons().Count < 6)
@@ -451,7 +452,7 @@ namespace Sharpmon
                             return;
                         }
                     }
-                    else if(hiddenSelector == ((page+1 < pageMax) ? (page+1)*8: (page*8)+player.GetSharpmonsInPC().Count%8))
+                    else if((page*8)+hiddenSelector == ((page+1 < pageMax) ? (page+1)*8: (page*8)+player.GetSharpmonsInPC().Count%8))
                         return;
                 }
                 else if(arrowSelector.ModifyHiddenScroll(ChoiceChar.Key, pageMax, out page))
@@ -683,9 +684,9 @@ namespace Sharpmon
                         player.GetSharpmons()[hiddenSelector] = TemporarySharpmon;
                         return;
                     }
-                    else
-                        arrowSelector.ModifyHiddenCounter(ChoiceChar.Key, out hiddenSelector);
                 }
+                else
+                    arrowSelector.ModifyHiddenCounter(ChoiceChar.Key, out hiddenSelector);
             }
             
         }
@@ -1165,7 +1166,9 @@ namespace Sharpmon
             for (int i = 0; i < player.GetSharpmons().Count; i++)
             {
                 if(i == 0)
-                    dynamicText += ($"\t{player.GetSharpmons()[i].Name} (Hp: {player.GetSharpmons()[i].CurrentHp}/{player.GetSharpmons()[i].MaxHp}) | Continue the fight with current the Sharpmon\n");
+                    dynamicText += ($"\t{player.GetSharpmons()[i].Name} (Hp: {player.GetSharpmons()[i].CurrentHp}/{player.GetSharpmons()[i].MaxHp}) | Keep your current Sharpmon\n");
+                else if(i == player.GetSharpmons().Count-1)
+                    dynamicText += ($"\t{player.GetSharpmons()[i].Name} (Hp: {player.GetSharpmons()[i].CurrentHp}/{player.GetSharpmons()[i].MaxHp})");
                 else
                     dynamicText += ($"\t{player.GetSharpmons()[i].Name} (Hp: {player.GetSharpmons()[i].CurrentHp}/{player.GetSharpmons()[i].MaxHp})\n");
             }
@@ -1202,7 +1205,7 @@ namespace Sharpmon
             hiddenSelector = 0;
             dynamicText = "";
             for (int i = page*8; i < ((page+1 < pageMax) ? (page+1)*8: (page*8)+player.GetSharpmonsInPC().Count%8); i++)
-                dynamicText += $"\t{player.GetSharpmonsInPC()[i].Name}\t(Hp: {player.GetSharpmonsInPC()[i].CurrentHp}/{player.GetSharpmonsInPC()[i].MaxHp})\n";
+                dynamicText += $"\t{player.GetSharpmonsInPC()[i].Name} (Hp: {player.GetSharpmonsInPC()[i].CurrentHp}/{player.GetSharpmonsInPC()[i].MaxHp})\n";
 
             dynamicText += "\tReturn to the PC's menu";
             Console.Clear();

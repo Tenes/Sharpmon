@@ -89,7 +89,7 @@ namespace Sharpmon
                 }
                 else
                 {
-                    if(player != null && i < player.GetSharpmons().Count)
+                    if(player != null && i < player.GetSharpmons().Count && !inPC)
                         this.DrawWithColor(i, player);
                     else if (inPC && (page*8)+i < ((page+1 < pageMax) ? (page+1)*8: (page*8)+player.GetSharpmonsInPC().Count%8))
                         this.DrawPCWithColor((page*8)+i, i, player);
